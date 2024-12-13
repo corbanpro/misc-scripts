@@ -1,22 +1,12 @@
 #!/bin/bash
 
-# Default values
-directory=$(pwd)
 mode="uncommitted"
 
-# Parse arguments
-while [[ $# -gt 0 ]]; do
-	case $1 in
-	-p)
-		mode="unpushed"
-		shift
-		;;
-	*)
-		directory=$1
-		shift
-		;;
-	esac
-done
+if [ -z "$1" ]; then
+	directory=~
+else
+	directory=$1
+fi
 
 # Validate the directory
 if [ ! -d "$directory" ]; then
@@ -81,4 +71,11 @@ check_subdirectories() {
 }
 
 # Run the script
+echo "Checking for untracked changes in $directory"
+check_directory "$directory"
+
+mode="unpushed"
+
+echo
+echo "Checking for unpushed commits in $directory"
 check_directory "$directory"

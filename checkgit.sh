@@ -2,10 +2,29 @@
 
 mode="uncommitted"
 
-if [ -z "$1" ]; then
+push_mode=1
+commit_mode=1
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+	-c)
+		push_mode=0
+		shift
+		;;
+
+	-p)
+		commit_mode=0
+		shift
+		;;
+	*)
+		directory=$1
+		shift
+		;;
+	esac
+done
+
+if [ -z "$directory" ]; then
 	directory=~
-else
-	directory=$1
 fi
 
 # Validate the directory
@@ -71,11 +90,18 @@ check_subdirectories() {
 }
 
 # Run the script
-echo "Checking for untracked changes in $directory"
-check_directory "$directory"
+if [[ "$commit_mode" -eq 1 ]]; then
+	echo "Checking for untracked changes in $directory"
+	check_directory "$directory"
+fi
 
 mode="unpushed"
 
-echo
-echo "Checking for unpushed commits in $directory"
-check_directory "$directory"
+if [[ "$commit_mode" -eq 1 && "$push_mode" -eq 1 ]]; then
+	echo
+fi
+
+if [[ "$push_mode" -eq 1 ]]; then
+	echo "Checking for unpushed commits in $directory"
+	check_directory "$directory"
+fi

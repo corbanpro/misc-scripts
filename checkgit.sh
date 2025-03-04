@@ -78,7 +78,7 @@ check_directory() {
 # Function to traverse subdirectories, skipping ignored paths
 check_subdirectories() {
 	local dir=$1
-	local ignore=(".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local")
+	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local")
 	for subdirectory in "$dir"/{.*,**}; do
 		if [ -d "$subdirectory" ]; then
 			if [[ " ${ignore[@]} " =~ " ${subdirectory##*/} " ]]; then

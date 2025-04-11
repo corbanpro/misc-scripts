@@ -26,7 +26,9 @@ check_directory() {
 	if [ -d "$dir/.git" ]; then
 		(
 			cd $dir
+			echo "pulling from: $dir"
 			git pull
+			echo
 		)
 	else
 		check_subdirectories "$dir"

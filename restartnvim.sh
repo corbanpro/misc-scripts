@@ -1,3 +1,5 @@
 #!/bin/bash
-bash ~/bash/removenvim.sh
-bash ~/bash/addnvim.sh
+./removenvim.sh &&
+./addnvim.sh &&
+echo "success"
+

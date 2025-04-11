@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the base directory to the first argument, or use the current directory
-directory=~
+directory=$HOME
 verbose=0
 
 while [[ $# -gt 0 ]]; do
@@ -24,7 +24,10 @@ check_directory() {
 		echo "Checking directory: $dir"
 	fi
 	if [ -d "$dir/.git" ]; then
-		git pull
+		(
+			cd $dir
+			git pull
+		)
 	else
 		check_subdirectories "$dir"
 	fi

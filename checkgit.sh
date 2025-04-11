@@ -4,6 +4,7 @@ mode="uncommitted"
 
 push_mode=1
 commit_mode=1
+verbose=0
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -14,6 +15,10 @@ while [[ $# -gt 0 ]]; do
 
 	-p)
 		commit_mode=0
+		shift
+		;;
+	--verbose)
+		verbose=1
 		shift
 		;;
 	*)
@@ -64,6 +69,9 @@ check_unpushed_commits() {
 # Function to traverse directories and check for git repositories
 check_directory() {
 	local dir=$1
+	if [ "$verbose" -eq 1 ]; then
+		echo "Checking directory: $dir"
+	fi
 	if [ -d "$dir/.git" ]; then
 		if [ "$mode" == "unpushed" ]; then
 			check_unpushed_commits "$dir"
@@ -78,7 +86,7 @@ check_directory() {
 # Function to traverse subdirectories, skipping ignored paths
 check_subdirectories() {
 	local dir=$1
-	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local")
+	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local" ".ebcli-virtual-env" ".dotnet" ".autojump")
 	for subdirectory in "$dir"/{.*,**}; do
 		if [ -d "$subdirectory" ]; then
 			if [[ " ${ignore[@]} " =~ " ${subdirectory##*/} " ]]; then

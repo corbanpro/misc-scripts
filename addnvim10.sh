@@ -6,4 +6,4 @@ mkdir -p ~/temp ~/.config/nvim &&
 	tar -xzf ~/temp/nvim-linux-x86_64.tar.gz -C ~/temp &&
 	sudo rm -rf /usr/local/nvim &&
 	sudo mv ~/temp/nvim-linux-x86_64 /usr/local/nvim/ &&
-	git clone https://github.com/corbanpro/neovim-config.git ~/.config/nvim
+	nvim --version

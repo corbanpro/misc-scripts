@@ -12,7 +12,6 @@ while [[ $# -gt 0 ]]; do
 		push_mode=0
 		shift
 		;;
-
 	-p)
 		commit_mode=0
 		shift

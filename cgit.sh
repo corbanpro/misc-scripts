@@ -100,6 +100,8 @@ check_subdirectories() {
 if [[ "$commit_mode" -eq 1 ]]; then
 	echo "Checking for untracked changes in $directory"
 	check_directory "$directory"
+	check_directory ~/.scripts
+	check_directory ~/repos
 fi
 
 mode="unpushed"
@@ -111,4 +113,6 @@ fi
 if [[ "$push_mode" -eq 1 ]]; then
 	echo "Checking for unpushed commits in $directory"
 	check_directory "$directory"
+	check_directory ~/.scripts
+	check_directory ~/repos
 fi

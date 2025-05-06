@@ -2,17 +2,15 @@
 
 # Set the base directory to the first argument, or use the current directory
 directory=$HOME/dev
-verbose=0
 
-while [[ $# -gt 0 ]]; do
-	case "$1" in
-	--verbose)
+verbose=0
+while getopts "fv" opt; do
+	case $opt in
+	v)
 		verbose=1
-		shift
 		;;
-	*)
-		directory=$1
-		shift
+	f)
+		fast=true
 		;;
 	esac
 done
@@ -24,12 +22,13 @@ check_directory() {
 		echo "Checking directory: $dir"
 	fi
 	if [ -d "$dir/.git" ]; then
-		(
-			cd $dir
-			echo "pulling from: $dir"
-			git pull
-			echo
-		)
+		echo "pulling from: $dir"
+		if [ "$fast" == "true" ]; then
+			git -C $dir pull &
+		else
+			git -C $dir pull
+		fi
+		echo
 	else
 		check_subdirectories "$dir"
 	fi
@@ -39,16 +38,18 @@ check_directory() {
 check_subdirectories() {
 	local dir=$1
 	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local" ".ebcli-virtual-env" ".dotnet" ".autojump" "/./" "/../")
-	fd --type d -d 1 . "$dir" | while read -r subdirectory; do
-
+	while IFS= read -r subdirectory; do
 		if [ -d "$subdirectory" ]; then
 			if [[ " ${ignore[@]} " =~ " ${subdirectory##*/} " ]]; then
 				continue
-
 			fi
 			check_directory "$subdirectory"
 		fi
-	done
+	done < <(fd --type d -d 1 . "$dir")
 }
 
-check_directory "$directory"
+check_directory $directory
+
+wait
+
+echo "All git repositories have been updated."

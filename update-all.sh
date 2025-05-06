@@ -107,10 +107,13 @@ if [[ -z "$repo" ]]; then
 else
 	for r in "${repos[@]}"; do
 		if [[ "${r}" =~ "${repo}" ]]; then
-			run_update $r
+			if [[ $slow == true ]]; then
+				run_update $r
+			else
+				run_update $r &
+			fi
 			updated=1
 		fi
-
 	done
 	if [[ updated -ne 1 ]]; then
 		echo -e "\033[31mNot a valid repo: $repo\033[0m"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the base directory to the first argument, or use the current directory
-directory=$HOME
+directory=$HOME/dev
 verbose=0
 
 while [[ $# -gt 0 ]]; do
@@ -38,11 +38,13 @@ check_directory() {
 # Function to traverse subdirectories, skipping ignored paths
 check_subdirectories() {
 	local dir=$1
-	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local" ".ebcli-virtual-env" ".dotnet" ".autojump")
-	for subdirectory in "$dir"/{.*,**}; do
+	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local" ".ebcli-virtual-env" ".dotnet" ".autojump" "/./" "/../")
+	fd --type d -d 1 . "$dir" | while read -r subdirectory; do
+
 		if [ -d "$subdirectory" ]; then
 			if [[ " ${ignore[@]} " =~ " ${subdirectory##*/} " ]]; then
 				continue
+
 			fi
 			check_directory "$subdirectory"
 		fi

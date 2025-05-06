@@ -28,7 +28,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z "$directory" ]; then
-	directory=~
+	directory=~/dev
 fi
 
 # Validate the directory
@@ -86,7 +86,7 @@ check_directory() {
 check_subdirectories() {
 	local dir=$1
 	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local" ".ebcli-virtual-env" ".dotnet" ".autojump")
-	for subdirectory in "$dir"/{.*,**}; do
+	fd --type d -d 1 . "$dir" | while read -r subdirectory; do
 		if [ -d "$subdirectory" ]; then
 			if [[ " ${ignore[@]} " =~ " ${subdirectory##*/} " ]]; then
 				continue

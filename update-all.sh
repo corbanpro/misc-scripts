@@ -4,13 +4,13 @@ if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "mvfg" opt; do
+while getopts "mvsg" opt; do
 	case $opt in
 	v)
 		verbose=true
 		;;
-	f)
-		fast=true
+	s)
+		slow=true
 		;;
 	m)
 		stayOnMain=true
@@ -24,6 +24,8 @@ while getopts "mvfg" opt; do
 		;;
 	esac
 done
+
+repo=$1
 
 repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks")
 migrations=("credentials-service" "data-enrichment" "data-fetch" "integration-crm" "signals-core")
@@ -94,17 +96,27 @@ function run_update {
 	update_repo $dir || (update_failed $dir && cleanup $dir)
 }
 
-# Run each update in the background
-for dir in "${repos[@]}"; do
-	# check if fast flag is set
-	if [[ $fast == true ]]; then
-		run_update $dir &
-	else
-		run_update $dir
-	fi
-done
+if [[ -z "$repo" ]]; then
+	for dir in "${repos[@]}"; do
+		if [[ $slow == true ]]; then
+			run_update $dir
+		else
+			run_update $dir &
+		fi
+	done
+else
+	for r in "${repos[@]}"; do
+		if [[ "${r}" =~ "${repo}" ]]; then
+			run_update $r
+			updated=1
+		fi
 
-# Wait for all background jobs to finish
+	done
+	if [[ updated -ne 1 ]]; then
+		echo -e "\033[31mNot a valid repo: $repo\033[0m"
+	fi
+fi
+
 wait
 
 echo -e "\033[32mAll updates completed.\033[0m"

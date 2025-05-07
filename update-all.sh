@@ -7,12 +7,12 @@ if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "Mmvsr:" opt; do
+while getopts "dmvsr:" opt; do
 	case $opt in
 	v) verbose=true ;;
-	s) slow=true ;;
-	M) stay_on_main=true ;;
-	m) run_migrations=true ;;
+	s) sequential=true ;;
+	m) stay_on_main=true ;;
+	d) run_database_migrations=true ;;
 	r) repo="$OPTARG" ;;
 	*) echo "Unknown flag" ;;
 	esac
@@ -38,7 +38,7 @@ function update_repo {
 		git pull --no-stat --quiet || return 1
 	fi
 
-	if [[ " ${migrations[@]} " =~ " ${dir} " && $run_migrations == true ]]; then
+	if [[ " ${migrations[@]} " =~ " ${dir} " && $run_database_migrations == true ]]; then
 		echo -e "\033[36mRunning Migrations on $dir\033[0m"
 		if [[ $verbose == true ]]; then
 			make migrate || return 1
@@ -76,7 +76,7 @@ function run_update {
 
 if [[ -z "$repo" ]]; then
 	for dir in "${repos[@]}"; do
-		if [[ $slow == true ]]; then
+		if [[ $sequential == true ]]; then
 			run_update $dir
 		else
 			run_update $dir &
@@ -85,7 +85,7 @@ if [[ -z "$repo" ]]; then
 else
 	for r in "${repos[@]}"; do
 		if [[ "${r}" =~ "${repo}" ]]; then
-			if [[ $slow == true ]]; then
+			if [[ $sequential == true ]]; then
 				run_update $r
 			else
 				run_update $r &

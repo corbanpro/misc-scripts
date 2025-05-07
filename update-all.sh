@@ -2,22 +2,17 @@
 
 repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks")
 migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core")
-generations=("credentials-service" "data-miner" "integration-crm" "integration-data-enrichment" "signals-core" "signals-webhooks")
 
 if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "Mmvsg" opt; do
+while getopts "Mmvs" opt; do
 	case $opt in
 	v) verbose=true ;;
 	s) slow=true ;;
 	m) stay_on_main=true ;;
 	M) run_migrations=true ;;
-	g)
-		generate=true
-		stay_on_main=true
-		;;
 	*) echo "Unknown flag" ;;
 	esac
 done
@@ -50,15 +45,6 @@ function update_repo {
 			make migrate || return 1
 		else
 			make migrate >>/dev/null || return 1
-		fi
-	fi
-
-	if [[ " ${generations[@]} " =~ " ${dir} " && $generate == true ]]; then
-		echo -e "\033[36mRunning Generate on $dir\033[0m"
-		if [[ $verbose == true ]]; then
-			make generate || return 1
-		else
-			make generate >>/dev/null || return 1
 		fi
 	fi
 

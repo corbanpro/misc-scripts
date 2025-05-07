@@ -7,17 +7,16 @@ if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "Mmvs" opt; do
+while getopts "Mmvsr:" opt; do
 	case $opt in
 	v) verbose=true ;;
 	s) slow=true ;;
-	m) stay_on_main=true ;;
-	M) run_migrations=true ;;
+	M) stay_on_main=true ;;
+	m) run_migrations=true ;;
+	r) repo="$OPTARG" ;;
 	*) echo "Unknown flag" ;;
 	esac
 done
-
-repo=$1
 
 function update_repo {
 	dir=$1

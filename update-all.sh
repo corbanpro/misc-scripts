@@ -2,6 +2,7 @@
 
 repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks")
 migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core")
+templ=("signals-core")
 
 if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
@@ -38,6 +39,16 @@ function update_repo {
 		git pull --no-stat --quiet || return 1
 	fi
 
+	if [[ " ${templ[@]} " =~ " ${dir} " ]]; then
+		echo -e "\033[34mUpdating templ on $dir\033[0m"
+
+		if [[ $verbose == true ]]; then
+			make templ || return 1
+		else
+			make templ >>/dev/null || return 1
+		fi
+	fi
+
 	if [[ " ${migrations[@]} " =~ " ${dir} " && $run_database_migrations == true ]]; then
 		echo -e "\033[36mRunning Migrations on $dir\033[0m"
 		if [[ $verbose == true ]]; then
@@ -60,6 +71,7 @@ function update_failed {
 function cleanup {
 	dir=$1
 	if [[ $stay_on_main != true ]]; then
+
 		echo -e "\033[34mSwitching back to previous branch on $dir\033[0m"
 		if [[ $verbose == true ]]; then
 			git switch -

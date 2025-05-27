@@ -43,8 +43,10 @@ function update_repo {
 		echo -e "\033[34mUpdating templ on $dir\033[0m"
 
 		if [[ $verbose == true ]]; then
+			rm -rf */**/*_templ.go
 			make templ || return 1
 		else
+			rm -rf */**/*_templ.go
 			make templ >>/dev/null || return 1
 		fi
 	fi
@@ -77,6 +79,18 @@ function cleanup {
 			git switch -
 		else
 			git switch - --quiet
+		fi
+
+		if [[ " ${templ[@]} " =~ " ${dir} " ]]; then
+			echo -e "\033[34mUpdating templ on $dir\033[0m"
+
+			if [[ $verbose == true ]]; then
+				rm -rf */**/*_templ.go
+				make templ || return 1
+			else
+				rm -rf */**/*_templ.go
+				make templ >>/dev/null || return 1
+			fi
 		fi
 	fi
 }

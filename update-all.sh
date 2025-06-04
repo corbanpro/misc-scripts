@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks")
+repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks" "docs")
 migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core")
 templ=("signals-core")
 

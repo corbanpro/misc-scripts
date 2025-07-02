@@ -1,11 +1,11 @@
 #!/bin/bash
 
-DB_NAME=local
+DB_ENV=local
 
 while getopts "sl" opt; do
 	case $opt in
-	s) DB_NAME=shared ;;
-	l) DB_NAME=local ;;
+	s) DB_ENV=shared ;;
+	l) DB_ENV=local ;;
 	*) echo "Unknown flag" ;;
 	esac
 done
@@ -30,7 +30,7 @@ SC_DB_NAME=$SC_LOCAL_DB_NAME
 SC_DB_PASSWORD=$SC_LOCAL_DB_PASSWORD
 SC_DB_USER=$SC_LOCAL_DB_USER
 
-if [[ $DB_NAME == "shared" ]]; then
+if [[ $DB_ENV == "shared" ]]; then
 	DF_DB_URL=$DF_SHARED_DB_URL
 	CM_DB_URL=$CM_SHARED_DB_URL
 
@@ -51,4 +51,4 @@ replace_line $SC_PATH DB_USER $SC_DB_USER
 replace_line $CM_PATH DB_URL $CM_DB_URL
 replace_line $DF_PATH DB_URL $DF_DB_URL
 
-echo "now using $DB_NAME db"
+echo "now using $DB_ENV db"

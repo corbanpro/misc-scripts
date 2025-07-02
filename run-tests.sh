@@ -1,5 +1,6 @@
 #!/bin/bash
 
+make templ
 make test | grep -v "no test files" | grep -v "failed to load godotenv" | grep -v '\\' | grep -v "coverage: 0.0%"
 exit_code=${PIPESTATUS[0]}
 

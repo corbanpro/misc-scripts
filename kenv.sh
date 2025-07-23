@@ -20,7 +20,7 @@ function replace_line {
 	" "$ENV_PATH"
 }
 
-source .env
+source ~/.scripts/.env
 
 DF_DB_URL=$DF_LOCAL_DB_URL
 CM_DB_URL=$CM_LOCAL_DB_URL
@@ -34,7 +34,7 @@ if [[ $DB_ENV == "shared" ]]; then
 	DF_DB_URL=$DF_SHARED_DB_URL
 	CM_DB_URL=$CM_SHARED_DB_URL
 
-	SC_DB_HOST=$SC_SHARED_DB_USER
+	SC_DB_HOST=$SC_SHARED_DB_HOST
 	SC_DB_NAME=$SC_SHARED_DB_NAME
 	SC_DB_PASSWORD=$SC_SHARED_DB_PASSWORD
 	SC_DB_USER=$SC_SHARED_DB_USER
@@ -44,11 +44,11 @@ SC_PATH=~/dev/signals-core/.env
 DF_PATH=~/dev/data-fetch/.env
 CM_PATH=~/dev/channel-manager/.env
 
-replace_line $SC_PATH DB_HOST $SC_DB_HOST
-replace_line $SC_PATH DB_NAME $SC_DB_NAME
-replace_line $SC_PATH DB_PASSWORD $SC_DB_PASSWORD
-replace_line $SC_PATH DB_USER $SC_DB_USER
-replace_line $CM_PATH DB_URL $CM_DB_URL
-replace_line $DF_PATH DB_URL $DF_DB_URL
+replace_line $SC_PATH "DB_HOST" $SC_DB_HOST
+replace_line $SC_PATH "DB_NAME" $SC_DB_NAME
+replace_line $SC_PATH "DB_PASSWORD" $SC_DB_PASSWORD
+replace_line $SC_PATH "DB_USER" $SC_DB_USER
+replace_line $CM_PATH "DB_URL" $CM_DB_URL
+replace_line $DF_PATH "DB_URL" $DF_DB_URL
 
 echo "now using $DB_ENV db"

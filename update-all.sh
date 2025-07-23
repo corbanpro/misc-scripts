@@ -1,19 +1,20 @@
 #!/bin/bash
 
-repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks" "docs")
-migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core")
+repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks" "docs" "signals-ma")
+migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core" "signals-ma")
 templ=("signals-core")
 
 if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "dmvsr:" opt; do
+while getopts "dnmvsr:" opt; do
 	case $opt in
 	v) verbose=true ;;
 	s) sequential=true ;;
 	m) stay_on_main=true ;;
 	d) run_database_migrations=true ;;
+	n) not_repo=true ;;
 	r) repo="$OPTARG" ;;
 	*) echo "Unknown flag" ;;
 	esac
@@ -100,28 +101,34 @@ function run_update {
 	update_repo $dir || (update_failed $dir && cleanup $dir)
 }
 
-if [[ -z "$repo" ]]; then
-	for dir in "${repos[@]}"; do
-		if [[ $sequential == true ]]; then
-			run_update $dir
+function run {
+	if [[ $sequential == true ]]; then
+		run_update $1
+	else
+		run_update $1 &
+	fi
+}
+
+if [[ -n "$repo" ]]; then
+	for r in "${repos[@]}"; do
+		if [[ $not_repo == true ]]; then
+			if [[ ! "${r}" =~ "${repo}" ]]; then
+				run $r
+			fi
 		else
-			run_update $dir &
+			if [[ "${r}" =~ "${repo}" ]]; then
+				run $r
+				updated=1
+			fi
+			if [[ updated -ne 1 ]]; then
+				echo -e "\033[31mNot a valid repo: $repo\033[0m"
+			fi
 		fi
 	done
 else
 	for r in "${repos[@]}"; do
-		if [[ "${r}" =~ "${repo}" ]]; then
-			if [[ $sequential == true ]]; then
-				run_update $r
-			else
-				run_update $r &
-			fi
-			updated=1
-		fi
+		run $r
 	done
-	if [[ updated -ne 1 ]]; then
-		echo -e "\033[31mNot a valid repo: $repo\033[0m"
-	fi
 fi
 
 wait

@@ -8,4 +8,4 @@ nginx -s stop
 
 cd ~/dev/data-fetch/
 make run_deps
-tmuxinator start devenv
+tmuxinator start $1

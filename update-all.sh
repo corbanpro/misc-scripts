@@ -1,8 +1,8 @@
 #!/bin/bash
 
-repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks" "docs" "signals-ma")
-migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core" "signals-ma")
-templ=("signals-core")
+repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks" "docs" "signals-mas" "signals-nerve")
+migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core" "signals-mas")
+templ=("signals-core" "signals-nerve")
 
 if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
@@ -118,10 +118,6 @@ if [[ -n "$repo" ]]; then
 		else
 			if [[ "${r}" =~ "${repo}" ]]; then
 				run $r
-				updated=1
-			fi
-			if [[ updated -ne 1 ]]; then
-				echo -e "\033[31mNot a valid repo: $repo\033[0m"
 			fi
 		fi
 	done

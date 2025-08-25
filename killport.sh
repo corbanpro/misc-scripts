@@ -1,4 +1,4 @@
-# !#/bin/bash
+#!/bin/bash
 
 pid=$(lsof -ti :$1 -sTCP:LISTEN)
 if [ -n "$pid" ]; then

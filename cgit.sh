@@ -4,7 +4,6 @@ mode="uncommitted"
 
 push_mode=1
 commit_mode=1
-verbose=0
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -16,31 +15,8 @@ while [[ $# -gt 0 ]]; do
 		commit_mode=0
 		shift
 		;;
-	--verbose)
-		verbose=1
-		shift
-		;;
-	*)
-		directory=$1
-		shift
-		;;
 	esac
 done
-
-if [ -z "$directory" ]; then
-	directory=~/dev
-fi
-
-# Validate the directory
-if [ ! -d "$directory" ]; then
-	echo "Error: Directory does not exist."
-	exit 1
-fi
-
-if [ ! -r "$directory" ]; then
-	echo "Error: Directory is not readable."
-	exit 1
-fi
 
 # Function to check for uncommitted changes
 check_uncommitted_changes() {
@@ -68,9 +44,6 @@ check_unpushed_commits() {
 # Function to traverse directories and check for git repositories
 check_directory() {
 	local dir=$1
-	if [ "$verbose" -eq 1 ]; then
-		echo "Checking directory: $dir"
-	fi
 	if [ -d "$dir/.git" ]; then
 		if [ "$mode" == "unpushed" ]; then
 			check_unpushed_commits "$dir"
@@ -96,12 +69,15 @@ check_subdirectories() {
 	done
 }
 
+dirs=(~/dev ~/.scripts ~/repos ~/.config/nvim/)
+
 # Run the script
 if [[ "$commit_mode" -eq 1 ]]; then
-	echo "Checking for untracked changes in $directory"
-	check_directory "$directory"
-	check_directory ~/.scripts
-	check_directory ~/repos
+	echo "Checking for untracked changes"
+
+	for d in "${dirs[@]}"; do
+		check_directory "$d"
+	done
 fi
 
 mode="unpushed"
@@ -111,8 +87,7 @@ if [[ "$commit_mode" -eq 1 && "$push_mode" -eq 1 ]]; then
 fi
 
 if [[ "$push_mode" -eq 1 ]]; then
-	echo "Checking for unpushed commits in $directory"
-	check_directory "$directory"
+	echo "Checking for unpushed commits"
 	check_directory ~/.scripts
 	check_directory ~/repos
 fi

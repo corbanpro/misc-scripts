@@ -1,12 +1,14 @@
 #!/bin/bash
 
+NEOVIM_PATH=~/bin/neovim/0.11/bin/nvim
+
 if [[ $# -eq 0 ]]; then
 	SESSION_PATH=~/.local/share/nvim/sessions$PWD/Session.vim
 	if [ -f $SESSION_PATH ]; then
-		'/Users/corbanprocuniar/bin/nvim-macos-arm64/bin/nvim' -S $SESSION_PATH
+		"$NEOVIM_PATH" -S $SESSION_PATH
 	else
-		'/Users/corbanprocuniar/bin/nvim-macos-arm64/bin/nvim'
+		"$NEOVIM_PATH"
 	fi
 else
-	'/Users/corbanprocuniar/bin/nvim-macos-arm64/bin/nvim' $*
+	"$NEOVIM_PATH" $@
 fi

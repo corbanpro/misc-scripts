@@ -69,7 +69,7 @@ check_subdirectories() {
 	done
 }
 
-dirs=(~/dev ~/.scripts ~/repos ~/.config/nvim/)
+dirs=(~/dev ~/.scripts ~/repos ~/.config)
 
 # Run the script
 if [[ "$commit_mode" -eq 1 ]]; then

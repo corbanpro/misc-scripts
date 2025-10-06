@@ -69,7 +69,7 @@ check_subdirectories() {
 	done
 }
 
-dirs=(~/dev ~/.scripts ~/repos ~/.config)
+dirs=(~/dev ~/.scripts ~/repos ~/.config ~/.config/nvim)
 
 # Run the script
 if [[ "$commit_mode" -eq 1 ]]; then
@@ -88,6 +88,8 @@ fi
 
 if [[ "$push_mode" -eq 1 ]]; then
 	echo "Checking for unpushed commits"
-	check_directory ~/.scripts
-	check_directory ~/repos
+
+	for d in "${dirs[@]}"; do
+		check_directory "$d"
+	done
 fi

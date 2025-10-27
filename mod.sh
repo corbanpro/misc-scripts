@@ -1,6 +1,8 @@
 #!/bin/bash
 
-go get github.com/signalscode/go-shared@latest 2>/dev/null
+if [[ "$(pwd)" != "/Users/corbanprocuniar/dev/go-shared" ]]; then
+	go get github.com/signalscode/go-shared/pkg@latest
+fi
 
 go get . &&
 	go mod tidy &&

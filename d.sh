@@ -1,3 +1,5 @@
 #!/bin/bash
-mkdir $1
-cd $1
+if [ -n "$1" ]; then
+	mkdir $1
+	cd $1
+fi

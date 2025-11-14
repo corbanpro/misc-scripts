@@ -2,13 +2,6 @@
 
 DIR="${1:-./...}"
 
-make -q templ 2>/dev/null
-STATUS=$?
-
-set -e
-
-if [ $STATUS -ne 2 ]; then
-	make templ
-fi
+maketempl
 
 go vet $DIR

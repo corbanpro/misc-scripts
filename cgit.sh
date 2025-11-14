@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mode="uncommitted"
+dirs=(~/dev ~/.scripts ~/repos ~/.config ~/.config/nvim)
 
 push_mode=1
 commit_mode=1
@@ -68,8 +69,6 @@ check_subdirectories() {
 		fi
 	done
 }
-
-dirs=(~/dev ~/.scripts ~/repos ~/.config ~/.config/nvim)
 
 # Run the script
 if [[ "$commit_mode" -eq 1 ]]; then

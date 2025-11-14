@@ -1,8 +1,8 @@
 #!/bin/bash
 
-repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks" "docs" "signals-mas" "signals-nerve" "go-shared")
+repos=("channel-manager" "chat-client" "content-pages" "credentials-service" "data-fetch" "data-miner" "integration-crm" "integration-data-enrichment" "ops" "portal" "profile-pages" "signals-core" "signals-webhooks" "docs" "signals-mas" "signals-nerve" "go-shared" "integration-messaging-service" "integration-ads")
 migrations=("credentials-service" "data-enrichment" "data-fetch" "data-miner" "integration-crm" "signals-core" "signals-mas")
-templ=("signals-core" "signals-nerve" "go-shared")
+templ=("signals-core" "signals-nerve" "go-shared" "signals-mas")
 
 if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates

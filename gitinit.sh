@@ -1,21 +1,20 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-	echo "Error: missing argument"
+REPO_NAME=$1
+
+if [ -z "$REPO_NAME" ]; then
+	echo "Error: missing repository name"
 	exit 1
 fi
 
-mkdir $1
-cd $1
+mkdir $REPO_NAME
+cd $REPO_NAME
 
-echo "# $1" >README.md
+echo "# $REPO_NAME" >README.md
 
 git init
 git add .
 git commit -m "initial commit"
 git branch -M main
 
-gh repo create $1 --public --source=. --push
-
-# git remote add origin "https://github.com/corbanpro/$1.git"
-# git push -u origin main
+gh repo create $REPO_NAME --public --source=. --push

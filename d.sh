@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if [ -n "$1" ]; then
 	mkdir $1
 	cd $1

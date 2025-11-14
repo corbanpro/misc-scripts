@@ -1,7 +1,14 @@
-#!/bin/zsh
+#!/bin/bash
 
-make templ || templ generate 2> >(grep --color=always -v "Complete")
-local gen_status=${pipestatus[1]:-1}
-if [[ "$gen_status" -eq 0 ]]; then
-	go vet "${1:-./...}"
+DIR="${1:-./...}"
+
+make -q templ 2>/dev/null
+STATUS=$?
+
+set -e
+
+if [ $STATUS -ne 2 ]; then
+	make templ
 fi
+
+go vet $DIR

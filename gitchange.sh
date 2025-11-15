@@ -4,10 +4,8 @@ set -euo pipefail
 
 # Check for required arguments
 if [ "$#" -ne 3 ]; then
-	echo --e "
-ERROR: incorrect arguments for gitchange
-Usage: gitchange <branch_name> <pr_name> <commit_message>
-Example: gitchange feature/update-pr \"Update configs\" \"Update configuration files\""
+	argerr gitchange
+	echo "USAGE: gitchange <branch_name> <pr_name> <commit_message>"
 	exit 1
 fi
 

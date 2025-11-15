@@ -3,7 +3,8 @@
 REPO_NAME=$1
 
 if [ -z "$REPO_NAME" ]; then
-	echo "Error: missing repository name"
+	argerr gitinit
+	echo "USAGE: gitinit <repo_name>"
 	exit 1
 fi
 

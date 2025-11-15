@@ -4,8 +4,8 @@ set -euo pipefail
 
 # Check for required arguments
 if [ "$#" -ne 4 ]; then
-	echo "Usage: $0 <working_directory> <branch_name> <pr_name> <commit_message>"
-	echo "Example: $0 ./ feature/update-pr \"Update configs\" \"Update configuration files\""
+	argerr masspr
+	echo "USAGE: masspr <working_directory> <branch_name> <pr_name> <commit_message>"
 	exit 1
 fi
 

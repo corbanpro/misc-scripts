@@ -1,7 +1,6 @@
 #!/bin/bash
 
 FILES=$(fd go.mod ~/dev)
-PRS=()
 BRANCH="chore/upgrade-go-shared"
 PR_NAME="chore(shared code): update go-shared version"
 COMMIT_MSG="upgrade go shared"
@@ -23,8 +22,4 @@ for F in $FILES; do
 	else
 		echo -e "${C_RED}Git status is not up to date for $F${C_RESET}"
 	fi
-done
-
-for PR in $PRS; do
-	echo $PR
 done

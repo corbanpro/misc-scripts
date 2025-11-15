@@ -2,7 +2,8 @@
 
 # Check if a folder argument is provided
 if [ -z "$1" ]; then
-	echo "Usage: $0 <folder_path>"
+	argerr gentest
+	echo "USAGE: gentest <folder_path>"
 	exit 1
 fi
 

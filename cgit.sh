@@ -3,30 +3,6 @@
 mode="uncommitted"
 dirs=(~/dev ~/.scripts ~/repos ~/.config ~/.config/nvim)
 
-push_mode=1
-commit_mode=1
-main_mode=1
-
-while [[ $# -gt 0 ]]; do
-	case "$1" in
-	-c)
-		push_mode=0
-		main_mode=0
-		shift
-		;;
-	-p)
-		commit_mode=0
-		main_mode=0
-		shift
-		;;
-	-m)
-		commit_mode=0
-		push_mode=0
-		shift
-		;;
-	esac
-done
-
 # Function to check for uncommitted changes
 check_uncommitted_changes() {
 	local dir=$1

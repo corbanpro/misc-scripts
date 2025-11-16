@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# Check for required arguments
 if [ "$#" -ne 3 ]; then
 	argerr gitchange
 	echo "USAGE: gitchange <branch_name> <pr_name> <commit_message>"
@@ -14,7 +13,7 @@ PR_NAME=$2
 COMMIT_MSG=$3
 
 echo "checking out $BRANCH_NAME"
-git checkout -B "$BRANCH_NAME" >/dev/null
+git checkout -b "$BRANCH_NAME" >/dev/null
 echo "committing changes"
 git commit -am "$COMMIT_MSG" >/dev/null
 echo "pushing to $BRANCH_NAME"

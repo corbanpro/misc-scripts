@@ -8,7 +8,7 @@ COMMIT_MSG="upgrade go shared"
 for F in $FILES; do
 	F=$(dirname $F)
 	cd $F
-	echo -e "${C_CYAN}updating $F${C_RESET}"
+	echo -e "\n${C_CYAN}updating $F${C_RESET}"
 	mod
 
 	if [ -n "$(git status --porcelain)" ]; then
@@ -18,6 +18,9 @@ for F in $FILES; do
 
 		gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" --draft >/dev/null ||
 			gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" --draft >/dev/null
+		echo -e "${C_CYAN}created pr for  $F${C_RESET}"
+	else
+		echo "no update needed"
 	fi
 done
 

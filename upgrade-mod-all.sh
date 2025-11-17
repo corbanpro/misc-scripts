@@ -12,7 +12,8 @@ for F in $FILES; do
 	mod
 
 	if [ -n "$(git status --porcelain)" ]; then
-		git commit -am "$COMMIT_MSG" >/dev/null
+		git add . >/dev/null
+		git commit -m "$COMMIT_MSG" >/dev/null
 
 		git push >/dev/null
 

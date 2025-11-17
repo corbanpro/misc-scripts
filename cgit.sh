@@ -1,6 +1,5 @@
 #!/bin/bash
 
-mode="uncommitted"
 dirs=(~/dev ~/.scripts ~/repos ~/.config ~/.config/nvim)
 
 # Function to check for uncommitted changes
@@ -70,6 +69,7 @@ check_subdirectories() {
 	done
 }
 
+mode="uncommitted"
 echo "Checking for untracked changes"
 
 for d in "${dirs[@]}"; do

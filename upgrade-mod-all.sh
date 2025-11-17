@@ -14,12 +14,14 @@ for F in $FILES; do
 	if [ -n "$(git status --porcelain)" ]; then
 		git add . >/dev/null
 		git commit -m "$COMMIT_MSG" >/dev/null
+		echo -e "${C_GREEN}committed changes for $F${C_RESET}"
 
 		git push >/dev/null
+		echo -e "${C_GREEN}pushed changes for $F${C_RESET}"
 
-		gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" --draft >/dev/null ||
-			gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" --draft >/dev/null
-		echo -e "${C_CYAN}created pr for  $F${C_RESET}"
+		# gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" --draft >/dev/null ||
+		# 	gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" --draft >/dev/null
+		# echo -e "${C_GREEN}created pr for $F${C_RESET}"
 	else
 		echo "no update needed"
 	fi

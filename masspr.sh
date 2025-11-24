@@ -21,7 +21,19 @@ for dir in "$ROOT_DIR"/*/; do
 	if [ -d ".git/" ]; then
 		# Check for untracked or modified files
 		if [ -n "$(git status --porcelain)" ]; then
-			gitchange $BRANCH_NAME $PR_NAME $COMMIT_MSG
+			echo "checking out $BRANCH_NAME"
+			git checkout -b "$BRANCH_NAME" >/dev/null
+			echo "committing changes"
+			git add . >/dev/null
+			git commit -m "$COMMIT_MSG" >/dev/null
+			echo "pushing to $BRANCH_NAME"
+			git push -u origin "$BRANCH_NAME" >/dev/null
+
+			echo "creating PR"
+			gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" --draft >/dev/null ||
+				gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" --draft >/dev/null
+
+			echo -e "${C_CYAN}Created PR for $PWD${C_RESET}"
 		fi
 	fi
 done

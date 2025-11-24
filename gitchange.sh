@@ -15,7 +15,8 @@ COMMIT_MSG=$3
 echo "checking out $BRANCH_NAME"
 git checkout -b "$BRANCH_NAME" >/dev/null
 echo "committing changes"
-git commit -am "$COMMIT_MSG" >/dev/null
+git add . >/dev/null
+git commit -m "$COMMIT_MSG" >/dev/null
 echo "pushing to $BRANCH_NAME"
 git push -u origin "$BRANCH_NAME" >/dev/null
 

@@ -19,9 +19,9 @@ for F in $FILES; do
 		git push >/dev/null
 		echo -e "${C_GREEN}pushed changes for $F${C_RESET}"
 
-		# gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" --draft >/dev/null ||
-		# 	gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" --draft >/dev/null
-		# echo -e "${C_GREEN}created pr for $F${C_RESET}"
+		gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" --draft >/dev/null ||
+			gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" --draft >/dev/null
+		echo -e "${C_GREEN}created pr for $F${C_RESET}"
 	else
 		echo "no update needed"
 	fi

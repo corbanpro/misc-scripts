@@ -1,7 +1,15 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-	watch "kubectl get pods | grep -e beta -e NAME"
+KUBE_COMMAND="kubectl get pods | grep -e NAME -e beta"
+
+GREP_PATTERNS=" -e NAME "
+
+if [ "$#" -gt 0 ]; then
+	for ARG in "$@"; do
+		GREP_PATTERNS+=" -e \"$ARG\" "
+	done
+
+	watch "$KUBE_COMMAND | grep $GREP_PATTERNS"
 else
-	watch "kubectl get pods | grep -e beta -e NAME | grep -e NAME -e \"$1\" "
+	watch "$KUBE_COMMAND"
 fi

@@ -11,3 +11,7 @@ go get . && go mod tidy
 if [ -d "./vendor" ]; then
 	go mod vendor
 fi
+
+if [ -e "./.reload" ]; then
+	echo "Notifying server to reload $(date)" >.reload
+fi

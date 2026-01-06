@@ -26,7 +26,7 @@ repos=(
 migrations=(
 	"credentials-service"
 	"data-enrichment"
-	"data-fetch"
+	"signals-nerve"
 	"data-miner"
 	"integration-crm"
 	"signals-core"

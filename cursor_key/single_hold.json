@@ -1,0 +1,28 @@
+{
+  "description": "Cursor Key (single, hold)",
+  "manipulators": [
+    {
+      "conditions": [
+        {
+          "identifiers": [
+            {
+              "product_id": 26112,
+              "vendor_id": 34824
+            }
+          ],
+          "type": "device_if"
+        }
+      ],
+      "from": { "key_code": "tab" },
+      "to_if_alone": [
+        {
+          "shell_command": "/Users/corbanprocuniar/.local/bin/cursor_key single_tap"
+        }
+      ],
+      "to_if_held_down": [
+        { "shell_command": "/Users/corbanprocuniar/.local/bin/cursor_key hold" }
+      ],
+      "type": "basic"
+    }
+  ]
+}

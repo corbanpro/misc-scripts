@@ -1,0 +1,125 @@
+{
+  "description": "Cursor Key (single, double, hold)",
+  "enabled": false,
+  "manipulators": [
+    {
+      "conditions": [
+        {
+          "identifiers": [
+            {
+              "product_id": 26112,
+              "vendor_id": 34824
+            }
+          ],
+          "type": "device_if"
+        },
+        {
+          "name": "double-tap-state",
+          "type": "variable_if",
+          "value": 1
+        }
+      ],
+      "description": "Single Tap Logic",
+      "from": { "key_code": "tab" },
+      "to": [
+        {
+          "shell_command": "/Users/corbanprocuniar/.local/bin/cursor_key single_tap"
+        },
+        {
+          "set_variable": {
+            "name": "double-tap-state",
+            "value": 0
+          }
+        }
+      ],
+      "type": "basic"
+    },
+    {
+      "conditions": [
+        {
+          "identifiers": [
+            {
+              "product_id": 26112,
+              "vendor_id": 34824
+            }
+          ],
+          "type": "device_if"
+        },
+        {
+          "name": "double-tap-state",
+          "type": "variable_if",
+          "value": 2
+        }
+      ],
+      "description": "Double Tap Logic",
+      "from": { "key_code": "tab" },
+      "to": [
+        {
+          "shell_command": "/Users/corbanprocuniar/.local/bin/cursor_key double_tap"
+        },
+        {
+          "set_variable": {
+            "name": "double-tap-state",
+            "value": 0
+          }
+        }
+      ],
+      "type": "basic"
+    },
+    {
+      "conditions": [
+        {
+          "identifiers": [
+            {
+              "product_id": 26112,
+              "vendor_id": 34824
+            }
+          ],
+          "type": "device_if"
+        }
+      ],
+      "description": "Main Tab Trigger",
+      "from": { "key_code": "tab" },
+      "parameters": {
+        "basic.to_delayed_action_delay_milliseconds": 220,
+        "basic.to_if_held_down_threshold_milliseconds": 180
+      },
+      "to": [
+        {
+          "set_variable": {
+            "name": "double-tap-state",
+            "value": 2
+          }
+        }
+      ],
+      "to_delayed_action": {
+        "to_if_canceled": [
+          {
+            "set_variable": {
+              "name": "double-tap-state",
+              "value": 0
+            }
+          }
+        ],
+        "to_if_invoked": [
+          {
+            "set_variable": {
+              "name": "double-tap-state",
+              "value": 1
+            }
+          }
+        ]
+      },
+      "to_if_held_down": [
+        {
+          "set_variable": {
+            "name": "tab_tap_state",
+            "value": 0
+          }
+        },
+        { "shell_command": "/Users/corbanprocuniar/.local/bin/cursor_key hold" }
+      ],
+      "type": "basic"
+    }
+  ]
+}

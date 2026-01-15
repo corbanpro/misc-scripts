@@ -82,10 +82,10 @@ function update_repo {
 		echo -e "\033[34mUpdating templ on $dir\033[0m"
 
 		if [[ $verbose == true ]]; then
-			rm -rf ./templates/**/*_templ.go
+			rm -rf ./**/*_templ.go
 			make templ || return 1
 		else
-			rm -rf ./templates/**/*_templ.go
+			rm -rf ./**/*_templ.go
 			make templ >>/dev/null || return 1
 		fi
 	fi

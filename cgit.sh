@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dirs=(~/dev ~/.scripts ~/repos ~/.config ~/.config/nvim)
+dirs=(~/dev ~/.scripts ~/.config ~/.config/nvim)
 
 # Function to check for uncommitted changes
 check_uncommitted_changes() {
@@ -41,6 +41,23 @@ check_branch_not_master() {
 	fi
 }
 
+check_main_up_to_date() {
+	local dir="$1"
+
+	# Fetch latest refs (required)
+	git -C "$dir" fetch origin main --quiet 2>/dev/null || git -C "$dir" fetch origin master --quiet
+
+	# Check if we're on main
+	local current_branch=$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+	if [[ "$current_branch" == "main" || "$current_branch" == "master" ]]; then
+		# Check if local main is behind origin/main
+		if [[ "$(git -C "$dir" rev-list --count main..origin/main 2>/dev/null || git -C "$dir" rev-list --count master..origin/master 2>/dev/null)" -gt 0 ]]; then
+			echo $dir
+		fi
+	fi
+}
+
 # Function to traverse directories and check for git repositories
 check_directory() {
 	local dir=$1
@@ -49,6 +66,7 @@ check_directory() {
 		unpushed) check_unpushed_commits "$dir" ;;
 		uncommitted) check_uncommitted_changes "$dir" ;;
 		master) check_branch_not_master "$dir" ;;
+		master_current) check_main_up_to_date "$dir" ;;
 		esac
 	else
 		check_subdirectories "$dir"
@@ -91,3 +109,13 @@ echo "Checking for branches not on main"
 for d in "${dirs[@]}"; do
 	check_directory "$d"
 done
+
+if [[ $1 == "behind" ]]; then
+	mode="master_current"
+	echo
+	echo "Checking for main branches that are behind"
+
+	for d in "${dirs[@]}"; do
+		check_directory "$d"
+	done
+fi

@@ -21,6 +21,8 @@ repos=(
 	"integration-messaging-service"
 	"integration-ads"
 	"signals-score-service"
+	"chat-inator"
+	"release-status"
 )
 
 migrations=(

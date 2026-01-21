@@ -2,11 +2,11 @@
 
 KUBE_COMMAND="kubectl get pods | grep -e NAME -e beta"
 
-GREP_PATTERNS=" -e NAME "
+GREP_PATTERNS="-e NAME"
 
 if [ "$#" -gt 0 ]; then
 	for ARG in "$@"; do
-		GREP_PATTERNS+=" -e \"$ARG\" "
+		GREP_PATTERNS+=" -e \"-$ARG\""
 	done
 
 	watch "$KUBE_COMMAND | grep $GREP_PATTERNS"

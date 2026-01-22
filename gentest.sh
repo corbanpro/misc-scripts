@@ -14,7 +14,11 @@ else
 	FOLDER_PATH="$1"
 fi
 
-mkdir -p "$FOLDER_PATH"
+# if the folder doesn't exist, exit 1
+if [ ! -d "$FOLDER_PATH" ]; then
+	echo "Folder $FOLDER_PATH does not exist"
+	exit 1
+fi
 
 # Get the folder's base name
 BASENAME=$(basename "$FOLDER_PATH")
@@ -23,6 +27,12 @@ PACKAGE_NAME="${LOWER_BASENAME}_test"
 TEST_NAME="$(tr '[:lower:]' '[:upper:]' <<<${BASENAME:0:1})${BASENAME:1}"
 
 TEST_FILE="${FOLDER_PATH}/${BASENAME}_test.go"
+
+# if the test file already exists, exit 1
+if [ -f "$TEST_FILE" ]; then
+	echo "Test file $TEST_FILE already exists"
+	exit 1
+fi
 
 # Create the test file with content
 cat >"$TEST_FILE" <<EOF

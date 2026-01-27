@@ -46,12 +46,10 @@ if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "dnmvsr:" opt; do
+while getopts "nvsr:" opt; do
 	case $opt in
 	v) verbose=true ;;
 	s) sequential=true ;;
-	m) stay_on_main=true ;;
-	d) run_database_migrations=true ;;
 	n) not_repo=true ;;
 	r) repo="$OPTARG" ;;
 	*) echo "Unknown flag" ;;
@@ -90,7 +88,7 @@ function update_repo {
 		fi
 	fi
 
-	if [[ " ${migrations[@]} " =~ " ${dir} " && $run_database_migrations == true ]]; then
+	if [[ " ${migrations[@]} " =~ " ${dir} " ]]; then
 		echo -e "\033[36mRunning Migrations on $dir\033[0m"
 		if [[ $verbose == true ]]; then
 			make migrate || return 1
@@ -111,25 +109,22 @@ function update_failed {
 
 function cleanup {
 	dir=$1
-	if [[ $stay_on_main != true ]]; then
+	echo -e "\033[34mSwitching back to previous branch on $dir\033[0m"
+	if [[ $verbose == true ]]; then
+		git switch -
+	else
+		git switch - --quiet
+	fi
 
-		echo -e "\033[34mSwitching back to previous branch on $dir\033[0m"
+	if [[ " ${templ[@]} " =~ " ${dir} " ]]; then
+		echo -e "\033[34mUpdating templ on $dir\033[0m"
+
 		if [[ $verbose == true ]]; then
-			git switch -
+			rm -rf */**/*_templ.go
+			make templ || return 1
 		else
-			git switch - --quiet
-		fi
-
-		if [[ " ${templ[@]} " =~ " ${dir} " ]]; then
-			echo -e "\033[34mUpdating templ on $dir\033[0m"
-
-			if [[ $verbose == true ]]; then
-				rm -rf */**/*_templ.go
-				make templ || return 1
-			else
-				rm -rf */**/*_templ.go
-				make templ >>/dev/null || return 1
-			fi
+			rm -rf */**/*_templ.go
+			make templ >>/dev/null || return 1
 		fi
 	fi
 }

@@ -37,7 +37,7 @@ check_branch_not_master() {
 
 	# Check if branch is NOT master or main
 	if [ "$branch" != "master" ] && [ "$branch" != "main" ]; then
-		echo "$dir"
+		echo -e "$(printf "%-45s" "$dir") $branch"
 	fi
 }
 

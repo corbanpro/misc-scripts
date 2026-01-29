@@ -109,7 +109,6 @@ function update_failed {
 
 function cleanup {
 	dir=$1
-	echo -e "\033[34mSwitching back to previous branch on $dir\033[0m"
 	if [[ $verbose == true ]]; then
 		git switch -
 	else

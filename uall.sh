@@ -97,7 +97,6 @@ function update_repo {
 		fi
 	fi
 
-	cleanup $dir
 	echo -e "\033[32mUpdate Complete: $dir\033[0m"
 	echo
 }
@@ -107,30 +106,9 @@ function update_failed {
 	echo -e "\033[31mUpdate Failed: $dir\033[0m"
 }
 
-function cleanup {
-	dir=$1
-	if [[ $verbose == true ]]; then
-		git switch -
-	else
-		git switch - --quiet
-	fi
-
-	if [[ " ${templ[@]} " =~ " ${dir} " ]]; then
-		echo -e "\033[34mUpdating templ on $dir\033[0m"
-
-		if [[ $verbose == true ]]; then
-			rm -rf */**/*_templ.go
-			make templ || return 1
-		else
-			rm -rf */**/*_templ.go
-			make templ >>/dev/null || return 1
-		fi
-	fi
-}
-
 function run_update {
 	dir=$1
-	update_repo $dir || (update_failed $dir && cleanup $dir)
+	update_repo $dir || update_failed $dir
 }
 
 function run {

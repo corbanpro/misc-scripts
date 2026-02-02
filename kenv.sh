@@ -53,7 +53,7 @@ fi
 SC_PATH=~/dev/signals-core/.env
 DF_PATH=~/dev/data-fetch/.env
 CM_PATH=~/dev/channel-manager/.env
-NV_PATH=~/dev/signals-nerve/.env
+NV_PATH=~/dev/nerve/.env
 
 replace_line $SC_PATH "DB_HOST" $SC_DB_HOST
 replace_line $SC_PATH "DB_NAME" $SC_DB_NAME

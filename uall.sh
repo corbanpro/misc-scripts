@@ -16,7 +16,7 @@ repos=(
 	"signals-webhooks"
 	"docs"
 	"signals-mas"
-	"signals-nerve"
+	"nerve"
 	"go-shared"
 	"integration-messaging-service"
 	"integration-ads"
@@ -28,7 +28,7 @@ repos=(
 migrations=(
 	"credentials-service"
 	"data-enrichment"
-	"signals-nerve"
+	"nerve"
 	"data-miner"
 	"integration-crm"
 	"signals-core"
@@ -37,7 +37,7 @@ migrations=(
 
 templ=(
 	"signals-core"
-	"signals-nerve"
+	"nerve"
 	"go-shared"
 	"signals-mas"
 )

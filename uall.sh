@@ -33,6 +33,7 @@ migrations=(
 	"integration-crm"
 	"signals-core"
 	"signals-mas"
+	"integration-messaging-service"
 )
 
 templ=(

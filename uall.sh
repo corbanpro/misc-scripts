@@ -120,6 +120,10 @@ function run {
 	fi
 }
 
+backupall
+
+echo
+
 if [[ -n "$repo" ]]; then
 	for r in "${repos[@]}"; do
 		if [[ $not_repo == true ]]; then

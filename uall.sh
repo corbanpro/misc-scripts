@@ -98,7 +98,7 @@ function update_repo {
 	fi
 
 	echo -e "\033[36mtrimming merged branches for $dir\033[0m"
-	(git branch --merged main 2>/dev/null || git branch --merged master) | grep -vE "main|master|^\*" | while read -r branch; do
+	(git branch --merged main 2>/dev/null || git branch --merged master) | grep -vE "^\s*main|^\s*master|^\*" | while read -r branch; do
 		git branch -d "$branch" >/dev/null
 	done
 

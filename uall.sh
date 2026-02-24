@@ -47,11 +47,10 @@ if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "ntvsr:" opt; do
+while getopts "nvsr:" opt; do
 	case $opt in
 	v) verbose=true ;;
 	s) sequential=true ;;
-	t) trim_branches=true ;;
 	n) not_repo=true ;;
 	r) repo="$OPTARG" ;;
 	*) echo "Unknown flag" ;;

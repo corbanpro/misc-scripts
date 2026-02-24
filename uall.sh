@@ -47,10 +47,9 @@ if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "nvsr:" opt; do
+while getopts "nvr:" opt; do
 	case $opt in
 	v) verbose=true ;;
-	s) sequential=true ;;
 	n) not_repo=true ;;
 	r) repo="$OPTARG" ;;
 	*) echo "Unknown flag" ;;
@@ -118,11 +117,7 @@ function run_update {
 }
 
 function run {
-	if [[ $sequential == true ]]; then
-		run_update $1
-	else
-		run_update $1 &
-	fi
+	run_update $1 &
 }
 
 backupall

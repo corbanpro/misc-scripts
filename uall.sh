@@ -47,10 +47,11 @@ if [[ ! -d "/tmp/repo_updates" ]]; then
 	mkdir -p /tmp/repo_updates
 fi
 
-while getopts "nvsr:" opt; do
+while getopts "ntvsr:" opt; do
 	case $opt in
 	v) verbose=true ;;
 	s) sequential=true ;;
+	t) trim_branches=true ;;
 	n) not_repo=true ;;
 	r) repo="$OPTARG" ;;
 	*) echo "Unknown flag" ;;
@@ -97,6 +98,11 @@ function update_repo {
 			make migrate >>/dev/null || return 1
 		fi
 	fi
+
+	echo -e "\033[36mtrimming merged branches for $dir\033[0m"
+	(git branch --merged main 2>/dev/null || git branch --merged master) | grep -vE "main|master|^\*" | while read -r branch; do
+		git branch -d "$branch" >/dev/null
+	done
 
 	echo -e "\033[32mUpdate Complete: $dir\033[0m"
 	echo

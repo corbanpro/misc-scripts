@@ -1,7 +1,8 @@
 #!/bin/bash
 
 function single_tap {
-	osascript -e 'tell application "System Events" to keystroke "q" using {control down, command down}'
+	echo "restarting server > $(date)" >~/dev/nerve/.reload
+	echo "restarting server > $(date)" >~/dev/signals-core/.reload
 }
 
 function double_tap {

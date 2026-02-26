@@ -88,6 +88,7 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = BeforeEach(func() {
+	db := sctx.CtxDB(allPermsCtx)
 	_, tx, err := sctx.BeginTx(allPermsCtx)
 	Expect(err).To(BeNil())
 	allPermsCtx = sctx.WithDBs(allPermsCtx, []sctx.Queryable{tx})
@@ -95,6 +96,8 @@ var _ = BeforeEach(func() {
 
 	DeferCleanup(func() {
 		Expect(tx.Rollback()).To(BeNil())
+		allPermsCtx = sctx.WithDBs(allPermsCtx, []sctx.Queryable{db})
+		noPermsCtx = sctx.WithDBs(noPermsCtx, []sctx.Queryable{db})
 	})
 })
 

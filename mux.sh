@@ -5,8 +5,8 @@ export rs_cmd="./release-status.mac"
 
 tmux kill-server 2>/dev/null
 
-nginx -s stop 2>/dev/null || exit 1
+nginx -s stop 2>/dev/null
 
 cd ~/dev/data-fetch/
-make run_deps
+make run_deps || exit 1
 tmuxinator start $1

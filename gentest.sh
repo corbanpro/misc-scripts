@@ -87,6 +87,17 @@ var _ = BeforeSuite(func() {
 	})
 })
 
+var _ = BeforeEach(func() {
+	_, tx, err := sctx.BeginTx(allPermsCtx)
+	Expect(err).To(BeNil())
+	allPermsCtx = sctx.WithDBs(allPermsCtx, []sctx.Queryable{tx})
+	noPermsCtx = sctx.WithDBs(noPermsCtx, []sctx.Queryable{tx})
+
+	DeferCleanup(func() {
+		Expect(tx.Rollback()).To(BeNil())
+	})
+})
+
 var _ = Describe("${TEST_NAME}", func() {
 	BeforeEach(func() {
 	})

@@ -39,16 +39,53 @@ cat >"$TEST_FILE" <<EOF
 package ${PACKAGE_NAME}
 
 import (
+	"context"
 	"testing"
 
+	"github.com/jmoiron/sqlx"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/signalscode/go-shared/pkg/auth"
+	"github.com/signalscode/go-shared/pkg/sctx"
+	"github.com/signalscode/go-shared/pkg/testkit"
+)
+
+var (
+	db          *sqlx.DB
+	dm          daom.DAOManager
+	allPermsCtx context.Context
+	noPermsCtx  context.Context
 )
 
 func Test${TEST_NAME}(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "${TEST_NAME} Suite")
 }
+
+var _ = BeforeSuite(func() {
+	var err error
+	db, err = test.DbConnect(context.Background())
+	Expect(err).To(BeNil())
+
+	dm = daom.NewDAOManager()
+
+	user := auth.NewUser()
+	user.ID = 1
+	user.TenantID = 1
+	user.AdminResourcePerms = auth.DebugAllPerms()
+	allPermsCtx = testkit.NewContext(testkit.NewContextOptions{
+		User: user,
+		DBs:  []sctx.Queryable{db},
+	})
+
+	noPermsUser := auth.NewUser()
+	noPermsUser.ID = 1
+	noPermsUser.TenantID = 1
+	noPermsCtx = testkit.NewContext(testkit.NewContextOptions{
+		User: noPermsUser,
+		DBs:  []sctx.Queryable{db},
+	})
+})
 
 var _ = Describe("${TEST_NAME}", func() {
 	BeforeEach(func() {
@@ -58,5 +95,7 @@ var _ = Describe("${TEST_NAME}", func() {
 	Expect(1).To(Equal(1))
 })
 EOF
+
+goimports -w "$TEST_FILE"
 
 echo "Generated test file: $TEST_FILE"

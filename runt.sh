@@ -4,7 +4,16 @@ DIR="${1:-./...}"
 
 maketempl
 
-go test -v "${1:-.}"/... | grep -v "no test files" | grep -v "failed to load godotenv" | grep -v '\\' | grep -v "coverage: 0.0%" | grep -v "failed to load .env" | grep -v "Finished running "
+echo
+
+go test -v "${1:-.}"/... |
+	grep -v "no test files" |
+	grep -v "coverage: 0.0%" |
+	grep -v "failed to load .env" |
+	grep -v "^Finished running \"" |
+	grep -v "Shell not found in container" |
+	sed '\|github.com/testcontainers/testcontainers-go - Connected to docker:|,+11d'
+
 exit_code=${PIPESTATUS[0]}
 
 if [ $exit_code -eq 0 ]; then

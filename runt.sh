@@ -1,16 +1,25 @@
 #!/bin/bash
 
-DIR="${1:-./...}"
+TARGET="${1:-.}"
+
+if [ -d "$1" ]; then
+	TARGET="$TARGET/..."
+elif [ ! -f "$TARGET" ]; then
+	echo "$TARGET is not a file or directory"
+	exit 1
+fi
 
 maketempl
 
 echo
 
-go test -v "${1:-.}"/... |
+go test -v "$TARGET" |
 	grep -v "no test files" |
 	grep -v "coverage: 0.0%" |
-	grep -v "failed to load .env" |
+	grep -v "⏳ Waiting for Reaper" |
+	grep -v "🔥 Reaper obtained from Docker for this test session" |
 	grep -v "^Finished running \"" |
+	grep -vE "Running batch [0-9]+ with [0-9]+ migration" |
 	grep -v "Shell not found in container" |
 	sed '\|github.com/testcontainers/testcontainers-go - Connected to docker:|,+11d'
 

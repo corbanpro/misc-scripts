@@ -2,11 +2,16 @@
 
 dirs=(~/dev ~/.scripts ~/.config ~/.config/nvim)
 
+print_dir() {
+	local dir="${1/#$HOME/~}"
+	echo -e "${C_CYAN}$(printf "%-36s" $dir) $2${C_RESET}"
+}
+
 # Function to check for uncommitted changes
 check_uncommitted_changes() {
 	local dir=$1
 	if [ -n "$(git -C "$dir" status --porcelain)" ]; then
-		echo "$dir"
+		print_dir "$dir"
 	fi
 }
 
@@ -21,7 +26,7 @@ check_unpushed_commits() {
 	local behind_ahead=(${push_status})
 	local ahead=${behind_ahead[1]}
 	if [ "$ahead" -gt 0 ]; then
-		echo "$dir"
+		print_dir "$dir"
 	fi
 }
 
@@ -37,7 +42,17 @@ check_branch_not_master() {
 
 	# Check if branch is NOT master or main
 	if [ "$branch" != "master" ] && [ "$branch" != "main" ]; then
-		echo -e "$(printf "%-45s" "$dir") $branch"
+		print_dir "$dir" "$branch"
+	fi
+}
+
+check_for_extra_branches() {
+	local dir="$1"
+
+	count=$(git -C "$dir" branch --format='%(refname:short)' | grep -v "^main$" | grep -v "^master$" | grep -v "^debug/.*" | grep -v "^archive/.*" | wc -l)
+
+	if [[ "$count" -gt 0 ]]; then
+		print_dir "$dir" "$count"
 	fi
 }
 
@@ -53,7 +68,7 @@ check_main_up_to_date() {
 	if [[ "$current_branch" == "main" || "$current_branch" == "master" ]]; then
 		# Check if local main is behind origin/main
 		if [[ "$(git -C "$dir" rev-list --count main..origin/main 2>/dev/null || git -C "$dir" rev-list --count master..origin/master 2>/dev/null)" -gt 0 ]]; then
-			echo $dir
+			print_dir "$dir"
 		fi
 	fi
 }
@@ -66,6 +81,7 @@ check_directory() {
 		unpushed) check_unpushed_commits "$dir" ;;
 		uncommitted) check_uncommitted_changes "$dir" ;;
 		master) check_branch_not_master "$dir" ;;
+		extra_branches) check_for_extra_branches "$dir" ;;
 		master_current) check_main_up_to_date "$dir" ;;
 		esac
 	else
@@ -109,6 +125,16 @@ echo "Checking for branches not on main"
 for d in "${dirs[@]}"; do
 	check_directory "$d"
 done
+
+if [[ $1 == "branches" ]]; then
+	mode="extra_branches"
+	echo
+	echo "Checking for extra branches"
+
+	for d in "${dirs[@]}"; do
+		check_directory "$d"
+	done
+fi
 
 if [[ $1 == "behind" ]]; then
 	mode="master_current"

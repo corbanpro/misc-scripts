@@ -2,7 +2,7 @@
 
 TARGET="${1:-.}"
 
-if [ -d "$1" ]; then
+if [ -d "$TARGET" ]; then
 	TARGET="$TARGET/..."
 elif [ ! -f "$TARGET" ]; then
 	echo "$TARGET is not a file or directory"

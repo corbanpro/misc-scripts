@@ -13,7 +13,7 @@ maketempl
 
 echo
 
-go test -v "$TARGET" |
+TZ=UTC go test -v "$TARGET" |
 	grep -v "no test files" |
 	grep -v "coverage: 0.0%" |
 	grep -v "⏳ Waiting for Reaper" |

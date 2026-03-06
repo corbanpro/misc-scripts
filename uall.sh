@@ -21,7 +21,8 @@ repos=(
 	"integration-messaging-service"
 	"integration-ads"
 	"signals-score-service"
-	"chat-inator"
+	# "chat-inator"
+	"pdf-lambda"
 	"release-status"
 )
 

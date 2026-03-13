@@ -49,7 +49,7 @@ check_branch_not_master() {
 check_for_extra_branches() {
 	local dir="$1"
 
-	count=$(git -C "$dir" branch --format='%(refname:short)' | grep -v "^main$" | grep -v "^master$" | grep -v "^debug/.*" | grep -v "^archive/.*" | wc -l)
+	count=$(git -C "$dir" branch --format='%(refname:short)' | grep -v "^main$" | grep -v "^master$" | grep -v "^debug/.*" | grep -v "^draft/.*" | grep -v "^archive/.*" | wc -l)
 
 	if [[ "$count" -gt 0 ]]; then
 		print_dir "$dir" "$count"

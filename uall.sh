@@ -61,6 +61,11 @@ function update_repo {
 	dir=$1
 	cd "$HOME/dev/$dir"
 
+	if [ -n "$(git status --porcelain)" ]; then
+		echo -e "\033[0;35mSkipping update because there are local changes\033[0m"
+		return
+	fi
+
 	echo -e "Starting Update: \033[32m$dir\033[0m"
 
 	echo -e "\033[34mSwitching to main branch on $dir\033[0m"

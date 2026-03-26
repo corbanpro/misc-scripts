@@ -62,7 +62,7 @@ function update_repo {
 	cd "$HOME/dev/$dir"
 
 	if [ -n "$(git status --porcelain)" ]; then
-		echo -e "\033[0;35mSkipping update because there are local changes\033[0m"
+		echo -e "\033[0;33mSkipping update because there are local changes\033[0m"
 		return
 	fi
 

@@ -11,6 +11,12 @@ function operation() {
 	mod
 }
 
+function upgrade_go_version() {
+	mod
+	cd .github
+	sedall "s/1.26.1/1.26.2/g"
+}
+
 for F in $FILES; do
 	F=$(dirname $F)
 	cd $F
@@ -26,8 +32,8 @@ for F in $FILES; do
 		git push || git push --set-upstream origin ${BRANCH}
 		echo -e "${C_GREEN}pushed changes for $F${C_RESET}"
 
-		gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" --draft >/dev/null ||
-			gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" --draft >/dev/null
+		gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base main --head "$BRANCH_NAME" >/dev/null ||
+			gh pr create --title "$PR_NAME" --body "$COMMIT_MSG" --base master --head "$BRANCH_NAME" >/dev/null
 		echo -e "${C_GREEN}created pr for $F${C_RESET}"
 	else
 		echo "no update needed"

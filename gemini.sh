@@ -22,13 +22,14 @@ URL="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:ge
 
 # Execute the request and parse the JSON response
 # We use 'jq' to extract just the text content for a clean output
-response=$(curl -s -X POST "$URL" \
+# Execute the request using jq to safely encode the payload
+response=$(jq -n --arg prompt "$1" '{
+  contents: [{
+    parts: [{ text: $prompt }]
+  }]
+}' | curl -s -X POST "$URL" \
 	-H 'Content-Type: application/json' \
-	-d "{
-      \"contents\": [{
-        \"parts\":[{\"text\": \"$1\"}]
-      }]
-    }")
+	-d @-) # The '@-' tells curl to read the body from stdin (the jq output)
 
 # Extract the text from the nested JSON structure
 echo "$response" | jq -r '.candidates[0].content.parts[0].text'

@@ -44,10 +44,6 @@ templ=(
 	"signals-mas"
 )
 
-if [[ ! -d "/tmp/repo_updates" ]]; then
-	mkdir -p /tmp/repo_updates
-fi
-
 while getopts "nvr:" opt; do
 	case $opt in
 	v) verbose=true ;;

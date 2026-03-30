@@ -3,7 +3,6 @@
 repos=(
 	"channel-manager"
 	"chat-client"
-	"content-pages"
 	"credentials-service"
 	"data-fetch"
 	"data-miner"

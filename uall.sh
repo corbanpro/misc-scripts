@@ -59,20 +59,27 @@ function update_repo {
 	cd "$HOME/dev/$dir"
 
 	if [ -n "$(git status --porcelain)" ]; then
-		echo -e "\033[0;33mSkipping update because there are local changes\033[0m"
+		echo -e "\033[0;33mSkipping update to $dir because there are local changes\033[0m"
 		return
 	fi
 
-	echo -e "Starting Update: \033[32m$dir\033[0m"
+	if [[ $verbose == true ]]; then
+		echo -e "Starting Update: \033[32m$dir\033[0m"
+	fi
 
-	echo -e "\033[34mSwitching to main branch on $dir\033[0m"
+	if [[ $verbose == true ]]; then
+		echo -e "\033[34mSwitching to main branch on $dir\033[0m"
+	fi
 	if [[ $verbose == true ]]; then
 		git switch $(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@') || return 1
 	else
 		git switch $(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@') --quiet || return 1
 	fi
 
-	echo -e "\033[34mPulling Changes on $dir\033[0m"
+	if [[ $verbose == true ]]; then
+		echo -e "\033[34mPulling Changes on $dir\033[0m"
+	fi
+
 	if [[ $verbose == true ]]; then
 		git pull || return 1
 	else
@@ -80,19 +87,23 @@ function update_repo {
 	fi
 
 	if [[ " ${templ[@]} " =~ " ${dir} " ]]; then
-		echo -e "\033[34mUpdating templ on $dir\033[0m"
+		if [[ $verbose == true ]]; then
+			echo -e "\033[34mUpdating templ on $dir\033[0m"
+		fi
 
 		if [[ $verbose == true ]]; then
 			rm -rf ./**/*_templ.go
 			make templ || return 1
 		else
 			rm -rf ./**/*_templ.go
-			make templ >>/dev/null || return 1
+			make templ >/dev/null 2>&1 || return 1
 		fi
 	fi
 
 	if [[ " ${migrations[@]} " =~ " ${dir} " ]]; then
-		echo -e "\033[36mRunning Migrations on $dir\033[0m"
+		if [[ $verbose == true ]]; then
+			echo -e "\033[36mRunning Migrations on $dir\033[0m"
+		fi
 		if [[ $verbose == true ]]; then
 			make migrate || return 1
 		else
@@ -100,15 +111,19 @@ function update_repo {
 		fi
 	fi
 
-	echo -e "\033[36mtrimming merged branches for $dir\033[0m"
+	if [[ $verbose == true ]]; then
+		echo -e "\033[36mtrimming merged branches for $dir\033[0m"
+	fi
 	(git branch --merged main 2>/dev/null || git branch --merged master) | grep -vE "^\s*main|^\s*master|^\*" | while read -r branch; do
 		if [[ ! $branch == debug/* && ! $branch == archive/* ]]; then
 			git branch -d "$branch" >/dev/null
 		fi
 	done
 
-	echo -e "\033[32mUpdate Complete: $dir\033[0m"
-	echo
+	if [[ $verbose == true ]]; then
+		echo -e "\033[32mUpdate Complete: $dir\033[0m"
+		echo
+	fi
 }
 
 function update_failed {
@@ -149,4 +164,6 @@ fi
 
 wait
 
-echo -e "\033[32mAll updates completed.\033[0m"
+if [[ $verbose == true ]]; then
+	echo -e "\033[32mAll updates completed.\033[0m"
+fi

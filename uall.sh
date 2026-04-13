@@ -25,6 +25,7 @@ repos=(
 	"release-status"
 	"visualizer-translator"
 	"signals-visualizer"
+	"js-shared"
 )
 
 migrations=(

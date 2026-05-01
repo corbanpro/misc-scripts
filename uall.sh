@@ -26,6 +26,9 @@ repos=(
 	"visualizer-translator"
 	"signals-visualizer"
 	"js-shared"
+	"toolservice"
+	"integration-connector"
+	"bug-reporter"
 )
 
 migrations=(
@@ -37,6 +40,7 @@ migrations=(
 	"signals-core"
 	"signals-mas"
 	"integration-messaging-service"
+	"integration-connector"
 )
 
 templ=(

@@ -41,6 +41,7 @@ migrations=(
 	"signals-mas"
 	"integration-messaging-service"
 	"integration-connector"
+	"toolservice"
 )
 
 templ=(

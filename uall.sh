@@ -27,6 +27,7 @@ repos=(
 	"signals-score-service"
 	"signals-visualizer"
 	"signals-webhooks"
+	"tilt"
 	"toolservice"
 	"visualizer-translator"
 )

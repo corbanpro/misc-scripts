@@ -14,7 +14,6 @@ repos=(
 	"integration-connector"
 	"integration-crm"
 	"integration-data-enrichment"
-	"integration-messaging-service"
 	"js-shared"
 	"nerve"
 	"ops"
@@ -40,7 +39,6 @@ migrations=(
 	"integration-crm"
 	"signals-core"
 	"signals-mas"
-	"integration-messaging-service"
 	"integration-connector"
 	"toolservice"
 )

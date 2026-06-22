@@ -10,6 +10,7 @@ repos=(
 	"data-miner"
 	"docs"
 	"go-shared"
+	"llm-evaluator"
 	"integration-ads"
 	"integration-connector"
 	"integration-crm"

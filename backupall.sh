@@ -2,7 +2,7 @@
 
 # Configuration
 BACKUP_SCRIPT="backupdb"
-DATABASES=("channel_manager" "datafetch" "datafetch2")
+DATABASES=("channel-manager-dev" "data-fetch-dev")
 BACKUP_ROOT="$HOME/db_backups"
 
 # Get today's date prefix
@@ -22,7 +22,7 @@ run_backup() {
 		echo "🚀 Starting background backup for [$DB]..."
 
 		# Call the script
-		bash "$BACKUP_SCRIPT" -u "postgres" -d "$DB" >/dev/null 2>&1
+		bash "$BACKUP_SCRIPT" -u "postgres" -p 5433 -d "$DB" >/dev/null 2>&1
 
 		if [ $? -eq 0 ]; then
 			echo "✅ [$DB] completed successfully."

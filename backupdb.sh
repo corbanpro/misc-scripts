@@ -5,17 +5,19 @@ BACKUP_ROOT="$HOME/db_backups"
 USER="postgres"
 HOST="localhost"
 DEFAULT_PASS="example"
+PORT=5432
 
 usage() {
 	echo "Usage: $0 -d <database_name> [-u <user>] [-h <host>]"
 	exit 1
 }
 
-while getopts "d:u:h:" opt; do
+while getopts "d:u:h:p:" opt; do
 	case $opt in
 	d) DB_NAME="$OPTARG" ;;
 	u) USER="$OPTARG" ;;
 	h) HOST="$OPTARG" ;;
+	p) PORT="$OPTARG" ;;
 	*) usage ;;
 	esac
 done
@@ -39,7 +41,7 @@ echo "🐘 Starting backup for database: $DB_NAME..."
 # --- 2. Execute Backup ---
 # We use -Fp for plain text (SQL).
 # Change to -Fc (custom format) if you want compressed/restorable via pg_restore.
-pg_dump -h "$HOST" -U "$USER" -d "$DB_NAME" -Fp >"$BACKUP_FILE"
+pg_dump -h "$HOST" -U "$USER" -d "$DB_NAME" -p "$PORT" -Fp >"$BACKUP_FILE"
 
 # --- 3. Verify and Cleanup ---
 if [ $? -eq 0 ]; then

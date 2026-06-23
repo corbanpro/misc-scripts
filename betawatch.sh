@@ -1,5 +1,7 @@
 #!/bin/bash
 
+kubectl config use-context gke_chatfunnels_us-central1-a_production
+
 KUBE_COMMAND="kubectl get pods | grep -e NAME -e beta"
 
 GREP_PATTERNS="-e NAME"

@@ -3,8 +3,8 @@
 # Default values
 USER="postgres"
 HOST="localhost"
-SOURCE_PORT=5432
-TARGET_PORT=5432
+SOURCE_PORT=5433
+TARGET_PORT=5433
 DEFAULT_PASS="example"
 FORCE=
 

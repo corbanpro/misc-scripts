@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DURATION=30s
+DURATION=2m
 if [[ -n $1 ]]; then
 	DURATION=$1
 fi

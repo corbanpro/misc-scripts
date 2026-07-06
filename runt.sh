@@ -15,6 +15,9 @@ echo
 
 TZ=UTC go test -v "$TARGET" |
 	grep -v "no test files" |
+	grep -v "=== RUN" |
+	grep -v "=== CONT" |
+	grep -v "=== PAUSE" |
 	grep -v "coverage: 0.0%" |
 	grep -v "⏳ Waiting for Reaper" |
 	grep -v "🔥 Reaper obtained from Docker for this test session" |

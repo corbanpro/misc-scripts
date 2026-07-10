@@ -1,11 +1,7 @@
 #!/bin/bash
 
 function single_tap {
-	echo "restarting server > $(date)" >~/dev/nerve/.reload
-	echo "restarting server > $(date)" >~/dev/signals-core/.reload
-	echo "restarting server > $(date)" >~/dev/signals-mas/.reload
-	echo "restarting server > $(date)" >~/dev/go-shared/.reload
-	echo "restarting server > $(date)" >~/dev/go-test/.reload
+	echo "restarting server > $(date)" >~/dev/tilt/.reload
 }
 
 function double_tap {

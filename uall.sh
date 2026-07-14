@@ -1,6 +1,7 @@
 #!/bin/bash
 
 repos=(
+	"ai-bench"
 	"bug-reporter"
 	"channel-manager"
 	"chat-client"
@@ -14,6 +15,7 @@ repos=(
 	"integration-connector"
 	"integration-crm"
 	"integration-data-enrichment"
+	"integration-messaging-service"
 	"integrations"
 	"js-shared"
 	"llm-evaluator"

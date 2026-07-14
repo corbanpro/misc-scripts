@@ -32,6 +32,7 @@ TZ=UTC go test "${VERBOSE[@]}" "$TARGET" |
 	grep -v "^Finished running \"" |
 	grep -vE "Running batch [0-9]+ with [0-9]+ migration" |
 	grep -v "Shell not found in container" |
+	grep -vE "ok\s+github.com/(chatfunnels|signalscode)" |
 	sed '\|github.com/testcontainers/testcontainers-go - Connected to docker:|,+11d'
 
 exit_code=${PIPESTATUS[0]}

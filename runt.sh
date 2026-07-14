@@ -1,6 +1,14 @@
 #!/bin/bash
 
-TARGET="${1:-.}"
+TARGET="."
+VERBOSE=()
+
+for arg in "$@"; do
+	case "$arg" in
+	-v) VERBOSE=(-v) ;;
+	*) TARGET="$arg" ;;
+	esac
+done
 
 if [ -d "$TARGET" ]; then
 	TARGET="$TARGET/..."
@@ -13,7 +21,7 @@ maketempl
 
 echo
 
-TZ=UTC go test -v "$TARGET" |
+TZ=UTC go test "${VERBOSE[@]}" "$TARGET" |
 	grep -v "no test files" |
 	grep -v "=== RUN" |
 	grep -v "=== CONT" |

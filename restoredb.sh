@@ -3,20 +3,22 @@
 # Default values
 USER="postgres"
 HOST="localhost"
+PORT=5433
 DEFAULT_PASS="example"
 FORCE=
 
 usage() {
-	echo "Usage: $0 -f <backup_file_path> -t <target_db> [-u <user>] [-h <host>]"
+	echo "Usage: $0 -f <backup_file_path> -t <target_db> [-u <user>] [-h <host>] [-p <port>]"
 	exit 1
 }
 
-while getopts "f:t:u:h:" opt; do
+while getopts "f:t:u:h:p:" opt; do
 	case $opt in
 	f) BACKUP_FILE="$OPTARG" ;;
 	t) TARGET_DB="$OPTARG" ;;
 	u) USER="$OPTARG" ;;
 	h) HOST="$OPTARG" ;;
+	p) PORT="$OPTARG" ;;
 	*) usage ;;
 	esac
 done
@@ -32,7 +34,7 @@ fi
 export PGPASSWORD=${PGPASSWORD:-$DEFAULT_PASS}
 
 # --- 2. Handle Existing Target ---
-DB_EXISTS=$(psql -h "$HOST" -U "$USER" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$TARGET_DB'")
+DB_EXISTS=$(psql -h "$HOST" -p "$PORT" -U "$USER" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$TARGET_DB'")
 
 if [[ "$DB_EXISTS" = "1" ]]; then
 	echo "⚠️  Target database '$TARGET_DB' already exists."
@@ -43,14 +45,14 @@ if [[ "$DB_EXISTS" = "1" ]]; then
 	fi
 
 	echo "🔄 Terminating connections and dropping '$TARGET_DB'..."
-	psql -h "$HOST" -U "$USER" -d postgres -c "REVOKE CONNECT ON DATABASE \"$TARGET_DB\" FROM public;" >/dev/null
-	psql -h "$HOST" -U "$USER" -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$TARGET_DB' AND pid <> pg_backend_pid();" >/dev/null
-	psql -h "$HOST" -U "$USER" -d postgres -c "DROP DATABASE \"$TARGET_DB\";" >/dev/null
+	psql -h "$HOST" -p "$PORT" -U "$USER" -d postgres -c "REVOKE CONNECT ON DATABASE \"$TARGET_DB\" FROM public;" >/dev/null
+	psql -h "$HOST" -p "$PORT" -U "$USER" -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$TARGET_DB' AND pid <> pg_backend_pid();" >/dev/null
+	psql -h "$HOST" -p "$PORT" -U "$USER" -d postgres -c "DROP DATABASE \"$TARGET_DB\";" >/dev/null
 fi
 
 # --- 3. Create Fresh Target ---
 echo "🏗️  Creating fresh database '$TARGET_DB'..."
-psql -h "$HOST" -U "$USER" -d postgres -c "CREATE DATABASE \"$TARGET_DB\";" >/dev/null
+psql -h "$HOST" -p "$PORT" -U "$USER" -d postgres -c "CREATE DATABASE \"$TARGET_DB\";" >/dev/null
 
 if [ $? -ne 0 ]; then
 	echo "❌ Error: Could not create database $TARGET_DB"
@@ -61,7 +63,7 @@ fi
 echo "📥 Restoring data from $BACKUP_FILE..."
 
 # Note: Using psql because the backup was created with -Fp (Plain text SQL)
-psql -h "$HOST" -U "$USER" -d "$TARGET_DB" <"$BACKUP_FILE" >/dev/null
+psql -h "$HOST" -p "$PORT" -U "$USER" -d "$TARGET_DB" <"$BACKUP_FILE" >/dev/null
 
 if [ $? -eq 0 ]; then
 	echo "✅ Success: Database '$TARGET_DB' has been restored."

@@ -149,9 +149,9 @@ function run {
 	run_update $1 &
 }
 
-backupall
+# backupall
 
-echo
+# echo
 
 if [[ -n "$repo" ]]; then
 	for r in "${repos[@]}"; do

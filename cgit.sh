@@ -126,22 +126,10 @@ for d in "${dirs[@]}"; do
 	check_directory "$d"
 done
 
-if [[ $1 == "branches" ]]; then
-	mode="extra_branches"
-	echo
-	echo "Checking for extra branches"
+mode="extra_branches"
+echo
+echo "Checking for extra branches"
 
-	for d in "${dirs[@]}"; do
-		check_directory "$d"
-	done
-fi
-
-if [[ $1 == "behind" ]]; then
-	mode="master_current"
-	echo
-	echo "Checking for main branches that are behind"
-
-	for d in "${dirs[@]}"; do
-		check_directory "$d"
-	done
-fi
+for d in "${dirs[@]}"; do
+	check_directory "$d"
+done

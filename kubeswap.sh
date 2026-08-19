@@ -1,9 +1,8 @@
 #!/bin/bash
 
-local ctx1="docker-desktop"
-local ctx2="gke_chatfunnels_us-central1-a_production"
+ctx1="docker-desktop"
+ctx2="gke_chatfunnels_us-central1-a_production"
 
-local current
 current=$(kubectl config current-context 2>/dev/null)
 
 if [[ "$current" == "$ctx1" ]]; then

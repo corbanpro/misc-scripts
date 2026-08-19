@@ -24,6 +24,7 @@ repos=(
 	"pdf-lambda"
 	"portal"
 	"profile-pages"
+	"pubhub"
 	"release-status"
 	"signals-core"
 	"signals-mas"
@@ -109,16 +110,16 @@ function update_repo {
 		fi
 	fi
 
-	if [[ " ${migrations[@]} " =~ " ${dir} " ]]; then
-		if [[ $verbose == true ]]; then
-			echo -e "\033[36mRunning Migrations on $dir\033[0m"
-		fi
-		if [[ $verbose == true ]]; then
-			make migrate || return 1
-		else
-			make migrate >>/dev/null || return 1
-		fi
-	fi
+	# if [[ " ${migrations[@]} " =~ " ${dir} " ]]; then
+	# 	if [[ $verbose == true ]]; then
+	# 		echo -e "\033[36mRunning Migrations on $dir\033[0m"
+	# 	fi
+	# 	if [[ $verbose == true ]]; then
+	# 		make migrate || return 1
+	# 	else
+	# 		make migrate >>/dev/null || return 1
+	# 	fi
+	# fi
 
 	if [[ $verbose == true ]]; then
 		echo -e "\033[36mtrimming merged branches for $dir\033[0m"

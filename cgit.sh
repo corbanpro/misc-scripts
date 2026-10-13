@@ -59,6 +59,27 @@ check_for_extra_branches() {
 	fi
 }
 
+# scp-style (git@host:path) or ssh://, rather than https://
+is_ssh_remote() {
+	local url="$1"
+	case "$url" in
+	ssh://* | git+ssh://*) return 0 ;;
+	*://*) return 1 ;;
+	*@*:*) return 0 ;;
+	esac
+	return 1
+}
+
+check_ssh_remotes() {
+	local dir="$1"
+	local name url
+	while read -r name url _; do
+		if is_ssh_remote "$url"; then
+			print_dir "$dir" "$url"
+		fi
+	done < <(git -C "$dir" remote -v 2>/dev/null | awk '!seen[$2]++ { print $1, $2 }')
+}
+
 check_main_up_to_date() {
 	local dir="$1"
 
@@ -91,6 +112,7 @@ check_directory() {
 		master) check_branch_not_master "$dir" ;;
 		extra_branches) check_for_extra_branches "$dir" ;;
 		master_current) check_main_up_to_date "$dir" ;;
+		ssh) check_ssh_remotes "$dir" ;;
 		esac
 	else
 		check_subdirectories "$dir"
@@ -137,6 +159,14 @@ done
 mode="extra_branches"
 echo
 echo "Checking for extra branches"
+
+for d in "${dirs[@]}"; do
+	check_directory "$d"
+done
+
+mode="ssh"
+echo
+echo "Checking for SSH remotes"
 
 for d in "${dirs[@]}"; do
 	check_directory "$d"

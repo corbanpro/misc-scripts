@@ -2,6 +2,13 @@
 
 dirs=(~/dev ~/.scripts ~/.config ~/.config/nvim)
 
+check_ssh=0
+for arg in "$@"; do
+	case "$arg" in
+	--ssh) check_ssh=1 ;;
+	esac
+done
+
 print_dir() {
 	local dir="${1/#$HOME/~}"
 	echo -e "${C_CYAN}$(printf "%-36s" $dir) $2${C_RESET}"
@@ -164,10 +171,12 @@ for d in "${dirs[@]}"; do
 	check_directory "$d"
 done
 
-mode="ssh"
-echo
-echo "Checking for SSH remotes"
+if [[ "$check_ssh" -eq 1 ]]; then
+	mode="ssh"
+	echo
+	echo "Checking for SSH remotes"
 
-for d in "${dirs[@]}"; do
-	check_directory "$d"
-done
+	for d in "${dirs[@]}"; do
+		check_directory "$d"
+	done
+fi

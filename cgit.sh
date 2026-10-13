@@ -112,7 +112,8 @@ check_directory() {
 	if [[ "$resolved" == "$HOME/dev/archive" || "$resolved" == "$HOME/dev/archive/"* ]]; then
 		return
 	fi
-	if [ -d "$dir/.git" ]; then
+	# .git may be a directory or a gitfile (worktrees and submodules).
+	if [ -e "$dir/.git" ]; then
 		case "$mode" in
 		unpushed) check_unpushed_commits "$dir" ;;
 		uncommitted) check_uncommitted_changes "$dir" ;;
@@ -130,14 +131,16 @@ check_directory() {
 check_subdirectories() {
 	local dir=$1
 	local ignore=(".go" ".aws" ".cache" ".cargo" ".cdk" ".cfm-schema" ".docker" ".gradle" ".hg" ".java" ".npm" ".nuxt" ".rustup" ".stack-work" ".svn" ".vim" ".wakatime" "dist" "node_modules" "target" "vendor" ".local" ".ebcli-virtual-env" ".dotnet" ".autojump")
-	fd --type d -d 1 . "$dir" | while read -r subdirectory; do
+	# fd appends a trailing slash, which makes ${path##*/} empty and skips the ignore list.
+	while IFS= read -r subdirectory; do
+		subdirectory="${subdirectory%/}"
 		if [ -d "$subdirectory" ]; then
-			if [[ " ${ignore[@]} " =~ " ${subdirectory##*/} " ]]; then
+			if [[ " ${ignore[*]} " =~ " ${subdirectory##*/} " ]]; then
 				continue
 			fi
 			check_directory "$subdirectory"
 		fi
-	done
+	done < <(fd --type d -d 1 . "$dir")
 }
 
 mode="uncommitted"

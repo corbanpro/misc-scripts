@@ -1,59 +1,24 @@
 #!/bin/bash
 
-repos=(
-	"ai-bench"
-	"bug-reporter"
-	"channel-manager"
-	"chat-client"
-	"chat-inator"
-	"credentials-service"
-	"data-fetch"
-	"data-miner"
-	"docs"
-	"go-shared"
-	"integration-ads"
-	"integration-connector"
-	"integration-crm"
-	"integration-data-enrichment"
-	"integration-messaging-service"
-	"integrations"
-	"js-shared"
-	"llm-evaluator"
-	"nerve"
-	"ops"
-	"pdf-lambda"
-	"portal"
-	"profile-pages"
-	"pubhub"
-	"release-status"
-	"signals-core"
-	"signals-mas"
-	"signals-score-service"
-	"signals-visualizer"
-	"signals-webhooks"
-	"tilt"
-	"toolservice"
-	"visualizer-translator"
-)
+repos=()
+while IFS= read -r repo_path; do
+	if git -C "$repo_path" rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
+		[ -n "$(git -C "$repo_path" remote)" ]; then
+		repos+=("${repo_path##*/}")
+	fi
+done < <(find "$HOME/dev" -mindepth 1 -maxdepth 1 -type d -print | sort)
 
-migrations=(
-	"credentials-service"
-	"data-enrichment"
-	"nerve"
-	"data-miner"
-	"integration-crm"
-	"signals-core"
-	"signals-mas"
-	"integration-connector"
-	"toolservice"
-)
-
-templ=(
-	"signals-core"
-	"nerve"
-	"go-shared"
-	"signals-mas"
-)
+skip_repos=("x-bff")
+if ((${#skip_repos[@]} > 0)); then
+	kept=()
+	for r in "${repos[@]}"; do
+		for s in "${skip_repos[@]}"; do
+			[[ "$r" == "$s" ]] && continue 2
+		done
+		kept+=("$r")
+	done
+	repos=("${kept[@]}")
+fi
 
 while getopts "nvr:" opt; do
 	case $opt in
@@ -64,6 +29,12 @@ while getopts "nvr:" opt; do
 	esac
 done
 
+function echo_verbose {
+	if [[ $verbose == true ]]; then
+		echo -e "$@"
+	fi
+}
+
 function update_repo {
 	dir=$1
 	cd "$HOME/dev/$dir"
@@ -73,22 +44,17 @@ function update_repo {
 		return
 	fi
 
-	if [[ $verbose == true ]]; then
-		echo -e "Starting Update: \033[32m$dir\033[0m"
-	fi
+	echo_verbose "Starting Update: \033[32m$dir\033[0m"
 
-	if [[ $verbose == true ]]; then
-		echo -e "\033[34mSwitching to main branch on $dir\033[0m"
-	fi
+	echo_verbose "\033[34mSwitching to main branch on $dir\033[0m"
+
 	if [[ $verbose == true ]]; then
 		git switch $(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@') || return 1
 	else
 		git switch $(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@') --quiet || return 1
 	fi
 
-	if [[ $verbose == true ]]; then
-		echo -e "\033[34mPulling Changes on $dir\033[0m"
-	fi
+	echo_verbose "\033[34mPulling Changes on $dir\033[0m"
 
 	if [[ $verbose == true ]]; then
 		git pull || return 1
@@ -96,44 +62,16 @@ function update_repo {
 		git pull --no-stat --quiet || return 1
 	fi
 
-	if [[ " ${templ[@]} " =~ " ${dir} " ]]; then
-		if [[ $verbose == true ]]; then
-			echo -e "\033[34mUpdating templ on $dir\033[0m"
-		fi
+	echo_verbose "\033[36mtrimming merged branches for $dir\033[0m"
 
-		if [[ $verbose == true ]]; then
-			rm -rf ./**/*_templ.go
-			make templ || return 1
-		else
-			rm -rf ./**/*_templ.go
-			make templ >/dev/null 2>&1 || return 1
-		fi
-	fi
-
-	# if [[ " ${migrations[@]} " =~ " ${dir} " ]]; then
-	# 	if [[ $verbose == true ]]; then
-	# 		echo -e "\033[36mRunning Migrations on $dir\033[0m"
-	# 	fi
-	# 	if [[ $verbose == true ]]; then
-	# 		make migrate || return 1
-	# 	else
-	# 		make migrate >>/dev/null || return 1
-	# 	fi
-	# fi
-
-	if [[ $verbose == true ]]; then
-		echo -e "\033[36mtrimming merged branches for $dir\033[0m"
-	fi
 	(git branch --merged main 2>/dev/null || git branch --merged master) | grep -vE "^\s*main|^\s*master|^\*" | while read -r branch; do
 		if [[ ! $branch == debug/* && ! $branch == archive/* ]]; then
 			git branch -d "$branch" >/dev/null
 		fi
 	done
 
-	if [[ $verbose == true ]]; then
-		echo -e "\033[32mUpdate Complete: $dir\033[0m"
-		echo
-	fi
+	echo_verbose "\033[32mUpdate Complete: $dir\033[0m"
+	echo_verbose
 }
 
 function update_failed {
@@ -149,10 +87,6 @@ function run_update {
 function run {
 	run_update $1 &
 }
-
-# backupall
-
-# echo
 
 if [[ -n "$repo" ]]; then
 	for r in "${repos[@]}"; do

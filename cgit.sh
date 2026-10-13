@@ -18,6 +18,9 @@ check_uncommitted_changes() {
 # Function to check for unpushed commits
 check_unpushed_commits() {
 	local dir=$1
+	if [ -z "$(git -C "$dir" remote)" ]; then
+		return
+	fi
 	push_status=$(git -C "$dir" rev-list --left-right --count @{upstream}...HEAD 2>/dev/null)
 	if [ $? -ne 0 ]; then
 		echo "Warning: Repository in $dir has no upstream set."
@@ -76,6 +79,11 @@ check_main_up_to_date() {
 # Function to traverse directories and check for git repositories
 check_directory() {
 	local dir=$1
+	local resolved
+	resolved=$(realpath "$dir" 2>/dev/null) || resolved="$dir"
+	if [[ "$resolved" == "$HOME/dev/archive" || "$resolved" == "$HOME/dev/archive/"* ]]; then
+		return
+	fi
 	if [ -d "$dir/.git" ]; then
 		case "$mode" in
 		unpushed) check_unpushed_commits "$dir" ;;

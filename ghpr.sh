@@ -159,14 +159,31 @@ if [[ "$ahead" -eq 0 ]]; then
 	exit 1
 fi
 
-git push -u origin HEAD
-upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}')
-if [[ "$upstream" != "origin/$branch" ]]; then
-	git branch --set-upstream-to="origin/$branch"
-	upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}')
+# Push first. -u may fail after a successful push if .git/config is not writable
+# (e.g. Cursor sandbox without required_permissions: ["all"]).
+if ! git push -u origin HEAD; then
+	echo "warning: git push -u failed; retrying push without updating local tracking" >&2
+	git push origin HEAD
+fi
+
+upstream=""
+if upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null); then
+	:
 fi
 if [[ "$upstream" != "origin/$branch" ]]; then
+	if git branch --set-upstream-to="origin/$branch" 2>/dev/null; then
+		upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}')
+	else
+		echo "warning: could not set upstream tracking (is .git/config writable?); continuing with origin/$branch" >&2
+		upstream=""
+	fi
+fi
+if [[ -n "$upstream" && "$upstream" != "origin/$branch" ]]; then
 	echo "upstream is $upstream, expected origin/$branch" >&2
+	exit 1
+fi
+if ! git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+	echo "origin/$branch was not found after push" >&2
 	exit 1
 fi
 

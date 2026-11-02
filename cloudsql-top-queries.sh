@@ -104,6 +104,7 @@ trap 'rm -rf "$WORKDIR"' EXIT
 fetch_metric() {
   local metric="$1"
   local out="$2"
+  local filter="metric.type=\"${metric}\" AND resource.labels.resource_id=\"${RESOURCE_ID}\""
   local page_token=""
   local pages=0
   : >"$out"
@@ -115,7 +116,7 @@ fetch_metric() {
       -H "Authorization: Bearer ${TOKEN}"
       -o "$body"
       -w '%{http_code}'
-      --data-urlencode "filter=metric.type=\"${metric}\" AND resource.labels.resource_id=\"${RESOURCE_ID}\""
+      --data-urlencode "filter=${filter}"
       --data-urlencode "interval.startTime=${START}"
       --data-urlencode "interval.endTime=${END}"
       --data-urlencode "aggregation.alignmentPeriod=${ALIGN}s"
@@ -163,15 +164,17 @@ jq -s -r --argjson n "$TOP" '
     gsub("[[:space:]]+"; " ")
     | sub("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}.*"; "")
     | if length > 180 then .[0:180] else . end;
-  def us_of:
-    [ .points[]? | (.value.int64Value // "0") | tonumber ] | add // 0;
+  def points_sum:
+    [ .points[]? | ((.value.doubleValue // .value.int64Value // "0") | tonumber) ] | add // 0;
   def calls_of:
     [ .points[]? | (.value.distributionValue.count // "0") | tonumber ] | add // 0;
+  def query_key:
+    (.resource.labels.database // "") + "|" + (.metric.labels.query_hash // "");
   (map(select(.metric.type | endswith("/execution_time"))) | map({
-      key: ((.resource.labels.database // "") + "|" + (.metric.labels.query_hash // "")),
+      key: query_key,
       db: (.resource.labels.database // ""),
       query: (.metric.labels.querystring // ""),
-      us: us_of
+      us: points_sum
     })
     | group_by(.key)
     | map({
@@ -181,7 +184,7 @@ jq -s -r --argjson n "$TOP" '
         us: (map(.us) | add)
       })) as $exec
   | (map(select(.metric.type | endswith("/latencies"))) | map({
-      key: ((.resource.labels.database // "") + "|" + (.metric.labels.query_hash // "")),
+      key: query_key,
       calls: calls_of
     })
     | group_by(.key)
@@ -199,7 +202,29 @@ jq -s -r --argjson n "$TOP" '
       ($row.value.query | clip)
     ]
   | @tsv
-' "${WORKDIR}/exec.ndjson" "${WORKDIR}/lat.ndjson" | while IFS=$'\t' read -r rank secs calls mean db query; do
-  printf '%s  %.1fs  calls=%s  mean_ms=%s  db=%s  %s\n' \
-    "$rank" "$secs" "$calls" "$( [[ "$mean" == "-" ]] && printf '-' || awk -v m="$mean" 'BEGIN { printf "%.2f", m }' )" "$db" "$query"
-done
+' "${WORKDIR}/exec.ndjson" "${WORKDIR}/lat.ndjson" >"${WORKDIR}/rows.tsv"
+
+rank_width=${#TOP}
+awk -F '\t' -v rank_width="$rank_width" '
+  function nfmt(v, width, spec) {
+    if (v == "-" || v == "") return sprintf("%" width "s", "-")
+    return sprintf("%" width spec, v + 0)
+  }
+  NR == FNR {
+    if (length($5) > db_width) db_width = length($5)
+    next
+  }
+  FNR == 1 {
+    if (db_width < 2) db_width = 2
+    printf "%*s  %10s  %12s  %10s  %-*s  %s\n", rank_width, "#", "exec_s", "calls", "mean_ms", db_width, "db", "query"
+  }
+  NF {
+    printf "%*s  %s  %s  %s  %-*s  %s\n",
+      rank_width, $1,
+      nfmt($2, 10, ".1f"),
+      nfmt($3, 12, ".0f"),
+      nfmt($4, 10, ".2f"),
+      db_width, $5,
+      $6
+  }
+' "${WORKDIR}/rows.tsv" "${WORKDIR}/rows.tsv"
